@@ -9,10 +9,10 @@ const startServer = async (dbConnectionUrl, appPort) => {
   await dbConnection(dbConnectionUrl);
 
   app.listen(appPort, () => {
-    console.log(`\x1b[34mServer running. Use our API on port: ${appPort}`);
+    console.log(`\x1b[34mServer running. API running on port: ${appPort}`);
   });
 };
 
-console.log("Application starting...");
+console.log("Petly starting...");
 
 startServer(dbConnectionUrl, appPort);

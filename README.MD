@@ -1,4 +1,4 @@
-# Petlify API
+# Petly API
 
 ### Commands:
 
