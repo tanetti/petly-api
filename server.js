@@ -3,7 +3,7 @@ const { dbConnection } = require("./src/services/dbConnection");
 require("dotenv").config();
 
 const dbConnectionUrl = process.env.DB_CONNECTION_URL;
-const appPort = process.env.APP_PORT || 8822;
+const appPort = process.env.PORT || 8822;
 
 const startServer = async (dbConnectionUrl, appPort) => {
   await dbConnection(dbConnectionUrl);
