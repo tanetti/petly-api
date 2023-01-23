@@ -1,4 +1,4 @@
-# PetFinder API
+# Petlify API
 
 ### Commands:
 

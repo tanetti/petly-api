@@ -1,5 +1,5 @@
 {
-  "name": "pet-finder-back",
+  "name": "petlify-api",
   "version": "0.1.0",
   "description": "",
   "main": "server.js",
@@ -12,9 +12,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tanetti/pet-finder-back.git"
+    "url": "git+https://github.com/tanetti/petlify-api.git"
   },
-  "homepage": "https://github.com/tanetti/pet-finder-back#readme",
+  "homepage": "https://petlify-api.up.railway.app/api/",
   "dependencies": {
     "@sendgrid/mail": "^7.7.0",
     "bcrypt": "^5.1.0",
