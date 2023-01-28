@@ -8,3 +8,5 @@ const ctrlWrappers = require("../../helpers/ctrlWrappers")
 const router = express.Router();
 
 router.get('/', ctrlWrappers(ctrlNews));
+
+module.exports = router
