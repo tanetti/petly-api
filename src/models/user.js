@@ -19,7 +19,6 @@ const user = new mongoose.Schema({
         type: String,
         required: [true, "You need password"],
         min: [6, "At least 6 characters"],
-
     },
     name: {
         type: String,
@@ -38,7 +37,6 @@ const user = new mongoose.Schema({
         type: Number,
         required: [true, "Enter your phone number"],
         min: [10, "At least 10 characters"],
-
     },
 
     createdAt: {
@@ -54,24 +52,22 @@ const user = new mongoose.Schema({
         default: false,
     },
     /*
-      verificationToken: {
-          type: String,
-          default: null,
-      }
-      
-      avatar: {
-          type: String,
+        verificationToken: {
+            type: String,
+            default: null,
+        }
+        
+        avatar: {
+            type: String,
 
-      },
-      subscription: {
-          type: String,
-          enum: ["starter", "pro", "business"],
-          default: "starter"
-      },
-      */
+        },
+        subscription: {
+            type: String,
+            enum: ["starter", "pro", "business"],
+            default: "starter"
+        },
+        */
 });
-
-
 
 user.pre("save", async function(next) {
     if (this.isModified("password")) {
@@ -84,7 +80,7 @@ const userSchemaValid = Joi.object({
     email: Joi.string().min(6).required(),
     password: Joi.string().min(6).required(),
     name: Joi.string().min(3).required(),
-    location: Joi.string().min(6).required(),
+    location: Joi.string().min(2).required(),
     number: Joi.number().min(10).required(),
 });
 

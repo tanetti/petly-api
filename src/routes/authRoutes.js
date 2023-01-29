@@ -1,16 +1,13 @@
-const express = require('express')
-const authRoutes = express.Router()
-const { Register } = require('../controllers/authControl')
+const express = require("express");
+const authRoutes = express.Router();
+const { Register } = require("../controllers/authControl");
+const { Validate } = require("../middlewares/validation");
+const { userSchemaValid } = require("../models/user");
 
-/*
-const { userSchemaValid } = require('../models/user')
-const { validate } = require('../middlewares/validation')
-*/
-
-authRoutes.post('/register', Register)
+authRoutes.post("/register", Validate(userSchemaValid), Register);
 
 /*
 authRoutes.put('/user/', updateUserData)
 */
 
-module.exports = authRoutes
+module.exports = authRoutes;
