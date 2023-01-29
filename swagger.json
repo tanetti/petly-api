@@ -1,0 +1,251 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "version": "2.0.2",
+        "title": "Swagger test",
+        "description": "Showing off swagger-ui-express",
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        }
+    },
+    "consumes": ["application/json", "multipart/form-data"],
+    "produces": ["application/json"],
+    "servers": [{ "url": "http://localhost:3000" }],
+    "tags": [
+        {
+            "name": "Auth",
+            "description": "Authorization endpoints"
+        },
+        {
+            "name": "Services-sidebar",
+            "description": "Partner contact information endpoints"
+        },
+        {
+            "name": "News",
+            "description": "News endpoints"
+        },
+        {
+            "name": "Notices",
+            "description": "Notices endpoints"
+        },
+        {
+            "name": "User",
+            "description": "User endpoints"
+        }
+    ],
+    "paths": {
+        "/auth/register": {
+            "post": {
+                "tags": ["Auth"],
+                "summary": "User registration",
+                "parameters": [],
+                "security": [{ "Bearer": [] }],
+                "requestBody": {
+                    "description": "Registration's object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RegistrationRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RegistrationResponse"
+                                }
+                            }
+                        }
+                    },
+                     "400": {
+                        "description": "Bad Request",
+                        "content": {}
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {}
+                    },
+                    "409": {
+                        "description": "Provided email already exists",
+                        "content": {}
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {}
+                    }
+                }
+            }
+        },
+        "/auth/login": {
+            "post": {
+                "tags": ["Auth"],
+                "summary": "User login",
+                "parameters": [],
+                "security": [{ "Bearer": [] }],
+                "requestBody": {
+                    "description": "Login's object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RegistrationRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LoginResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {}
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {}
+                    },
+                    "409": {
+                        "description": "Provided email already exists",
+                        "content": {}
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {}
+                    }
+                }
+            }
+        },
+        "/auth/edit": {
+            "patch": {
+                "tags": ["Auth"],
+                "summary": "User registration",
+                "parameters": [],
+                "security": [{ "Bearer": [] }],
+                "requestBody": {
+                    "description": "Registration's object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RegistrationRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RegistrationResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request (invalid request body)",
+                        "content": {}
+                    },
+                    "409": {
+                        "description": "Provided email already exists",
+                        "content": {}
+                    }
+                }
+            }
+        },
+        "/auth/logout": {
+            "post": {
+                "tags": ["Auth"],
+                "summary": "User logout",
+                "parameters": [{
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                }],
+                "security": [{ "Bearer": [] }],
+                "requestBody": {},
+                "responses": {
+                    "204": {
+                        "description": "No Content",
+                        "content": {}
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {}
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "RegistrationRequest": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "description": "User's email",
+                        "format": "email"
+                    },
+                    "password": {
+                        "type": "string",
+                        "description": "User's password",
+                        "example": "qwerty123"
+                    }
+                }
+            },
+            "RegistrationResponse": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "description": "User's email",
+                        "format": "email"
+                    }
+                }
+            },
+            "LoginResponse": {
+                "type": "object",
+                "properties": {
+                    "token": {
+                        "type": "string",
+                        "description": "User's token"
+                    },
+                    "email": {
+                        "type": "string",
+                        "description": "User's email",
+                        "format": "email"
+                    }
+                }
+            }
+        },
+        
+        "securitySchemes": {
+            "Bearer": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        }
+    }
+}
+
+
+
+
