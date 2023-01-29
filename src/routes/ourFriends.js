@@ -2,7 +2,7 @@ const express = require("express");
 
 const ctrl = require("../controllers");
 
-const { ctrlWrapper } = require("../helers");
+const { ctrlWrapper } = require("../helpers");
 
 const router = express.Router();
 

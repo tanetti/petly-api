@@ -2,9 +2,9 @@ const express = require("express");
 const logger = require("morgan");
 const cors = require("cors");
 
-require("dotenv").config();
+// require("dotenv").config();
 
-const ourFriensRouter = require("./routes/ourFriends");
+const ourFriendsRouter = require("./routes/ourFriends");
 
 const app = express();
 
@@ -15,7 +15,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static("public"));
 
-app.use("/api/services", ourFriensRouter);
+app.use("/api/services", ourFriendsRouter);
 
 app.use((req, res) => {
   res.status(404).json({ code: "not-found", message: "Path wasn't found" });
