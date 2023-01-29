@@ -5,7 +5,7 @@ require("dotenv").config();
 const {
     findUserByObjectOfParameters,
     updateUserByIdService,
-  } = require("../services/users");
+  } = require("../../services/users");
 
 const loginUserController = async (req, res) => {
     const { email: requestEmail, password: requestPassword } = req.body;
@@ -59,6 +59,4 @@ const loginUserController = async (req, res) => {
     }
   };
 
-  module.exports = {
-    loginUserController
-  }
+  module.exports = loginUserController;

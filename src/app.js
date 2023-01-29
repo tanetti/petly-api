@@ -5,6 +5,9 @@ const cors = require("cors");
 const app = express();
 
 const formatsLogger = app.get("env") === "development" ? "dev" : "short";
+const authRouter = require('./routes/api/auth');
+
+app.use("/api/users", authRouter)
 
 app.use(logger(formatsLogger));
 app.use(cors());
