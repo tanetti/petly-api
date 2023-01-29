@@ -1,10 +1,9 @@
-const News = require("../models/news")
+const News = require('../models/news');
+
 const listNews = async (req, res, next) => {
-  
-    const result = await News.find();
+  const result = await News.find();
 
-  res.json(result)
- 
-}
+  res.json(result);
+};
 
-module.exports = listNews
+module.exports = listNews;
