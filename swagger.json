@@ -190,6 +190,97 @@
                     }
                 }
             }
+        },
+        "/friends": {
+            "get": {
+                "tags": ["Friends"],
+                "summary": "Partner contact information",
+                "parameters": [],
+                "security": [{ "Bearer": [] }],
+
+                "responses": {
+                    "201": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FriendsResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "content": {}
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {}
+                    }
+                }
+            }
+        },
+        "/news": {
+            "get": {
+                "tags": ["News"],
+                "summary": "News list",
+                "parameters": [],
+                "security": [{ "Bearer": [] }],
+
+                "responses": {
+                    "201": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NewsResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "content": {}
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {}
+                    }
+                }
+            }
+        },
+        "/notices/sell": {
+            "get": {
+                "tags": ["Notices"],
+                "summary": "Sale advertisements",
+                "parameters": [],
+                "security": [{ "Bearer": [] }],
+
+                "responses": {
+                    "201": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SellNoticesResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {}
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "content": {}
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {}
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -233,6 +324,136 @@
                         "format": "email"
                     }
                 }
+            },
+            "FriendItem": {
+                "type": "object",
+                "properties": {
+                    "title": {
+                      "type": "string",
+                      "description": "Company's name",
+                      "example": "Happy Paw"
+                    },
+                    "addressUrl": {
+                      "type": "string",
+                      "description": "Company's website",
+                      "example": "https://goo.gl/maps/iq8NXEUf31EAQCzc6"
+                    },
+                    "imageUrl": {
+                      "type": "string",
+                      "description": "Company's avatar",
+                      "example": "https://storage.googleapis.com/kidslikev2_bucket/pets-support/images/sponsors/frame_287.png"
+                    },
+                    "address": {
+                      "type": "string",
+                      "description": "Company's address",
+                      "example": "Fedorivka, Kyiv Oblast, Ukraine, 07372"
+                    },
+                    "workDays": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "isOpen": {
+                                    "type": "boolean",
+                                    "description": "Working day"
+                                },
+                                "from": {
+                                    "type": "string",
+                                    "description": "Opening time"
+                                },
+                                "to": {
+                                    "type": "string",
+                                    "description": "Close time"
+                                }
+                            }
+                        },
+                        "example": [
+                            { "isOpen": true, "from": "09:00", "to": "17:00" },
+                            { "isOpen": true, "from": "09:00", "to": "17:00" }
+                        ]
+                    },  
+                    "phone": {
+                      "type": "number",
+                      "description": "Company's phone number",
+                      "example": "+380442900329"
+                    },
+                    "email": {
+                      "type": "string",
+                      "description": "Company's email",
+                      "example": "hello@happypaw.ua"
+                    }
+                }
+            },
+            "FriendsResponse": {
+                "type": "array",
+                "items": {
+                    "$ref": "#/components/schemas/FriendItem"
+                }   
+            },
+            "NewsItem": {
+                "type": "object",
+                "properties": {
+                    "title": {
+                      "type": "string",
+                      "description": "Article's title"
+                    },
+                    "url": {
+                      "type": "string",
+                      "description": "Article source",
+                      "example": "https://goo.gl/maps/iq8NXEUf31EAQCzc6"
+                    },
+                    "description": {
+                      "type": "string",
+                      "description": "Article's text"
+                    },
+                    "date": {
+                      "type": "string",
+                      "description": "Article publication date",
+                      "example": "2022-08-12"
+                    }
+                }
+            },
+            "NewsResponse": {
+                "type": "array",
+                "items": {
+                    "$ref": "#/components/schemas/NewsItem"
+                }   
+            },
+            "SellNoticesItem": {
+                "type": "object",
+                "properties": {
+                    "title": {
+                      "type": "string",
+                      "description": "Sell advertisement title",
+                      "example": "Сute dog looking for a home"
+                    },
+                    "breed": {
+                      "type": "string",
+                      "description": "Breed of a pet",
+                      "example": "Pomeranian"
+                    },
+                    "imageUrl": {
+                      "type": "string",
+                      "description": "Sell advertisement avatar",
+                      "example": "https://storage.googleapis.com/kidslikev2_bucket/pets-support/images/sponsors/frame_287.png"
+                    },
+                    "age": {
+                      "type": "string",
+                      "description": "Age of a pet",
+                      "example": "one year"
+                    },
+                    "price": {
+                      "type": "string",
+                      "description": "Sell advertisement price",
+                      "example": "50$"
+                    }
+                }
+            },
+            "SellNoticesResponse": {
+                "type": "array",
+                "items": {
+                    "$ref": "#/components/schemas/SellNoticesItem"
+                }   
             }
         },
         
