@@ -7,16 +7,16 @@ const authHeaderValidation = async (req, res, next) => {
 
   try {
     if (!authHeader) {
-      throw new Error('Please provide an authorization header');
+      throw new Error('token-no-token');
     }
 
     const [tokenType, token] = authHeader.split(' ');
 
     if (!tokenType || tokenType !== 'Bearer') {
-      throw new Error('Authorization token type invalid');
+      throw new Error('token-invalid');
     }
     if (!token) {
-      throw new Error('Please provide a valid authorization token');
+      throw new Error('token-invalid');
     }
 
     const { _id } = jwt.verify(token, process.env.JWT_SECRET);
@@ -24,18 +24,17 @@ const authHeaderValidation = async (req, res, next) => {
     const user = await findUserByIdService(_id);
 
     if (!user) {
-      throw new Error(`No user with ID: "${_id}" was found`);
+      throw new Error('token-no-user');
     }
 
     if (user.token !== token) {
-      throw new Error('Invalid authorization token');
+      throw new Error('token-invalid');
     }
 
     req.user = user;
   } catch (error) {
     return res.status(401).json({
-      code: 'api-authorization-error',
-      message: error.message,
+      code: error.message,
     });
   }
 

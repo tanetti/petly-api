@@ -18,14 +18,10 @@ const registerController = async (req, res) => {
     res.status(201).json({ email });
   } catch (error) {
     if (error.code === 11000) {
-      return res
-        .status(409)
-        .json({ code: 'api-register-error', message: 'Email in use' });
+      return res.status(409).json({ code: 'register-email-in-use-error' });
     }
 
-    return res
-      .status(400)
-      .json({ code: 'api-register-error', message: error.message });
+    return res.status(400).json({ code: error.message });
   }
 };
 
@@ -36,7 +32,7 @@ const loginController = async (req, res) => {
     const user = await findUserByObjectOfParameters({ email: requestEmail });
 
     if (!user) {
-      throw new Error(`No user was found with Email: ${requestEmail}`);
+      throw new Error('login-no-user');
     }
 
     const {
@@ -57,7 +53,7 @@ const loginController = async (req, res) => {
     );
 
     if (!isUsersPasswordMatch) {
-      throw new Error('Wrong password');
+      throw new Error('login-wrong-password');
     }
 
     const token = jwt.sign({ _id }, process.env.JWT_SECRET);
@@ -79,9 +75,7 @@ const loginController = async (req, res) => {
 
     res.json(result);
   } catch (error) {
-    return res
-      .status(401)
-      .json({ code: 'api-login-error', message: error.message });
+    return res.status(401).json({ code: error.message });
   }
 };
 
@@ -92,7 +86,7 @@ const refreshController = async (req, res) => {
     const user = await findUserByIdService(_id);
 
     if (!user) {
-      throw new Error(`No user was found with ID: ${_id}`);
+      throw new Error('refresh-no-user');
     }
 
     const {
@@ -119,7 +113,7 @@ const refreshController = async (req, res) => {
   } catch (error) {
     return res
       .status(400)
-      .json({ code: 'api-refresh-error', message: error.message });
+      .json({ code: error.message });
   }
 };
 
@@ -130,7 +124,7 @@ const logoutController = async (req, res) => {
     const user = await findUserByIdService(_id);
 
     if (!user) {
-      throw new Error(`No user was found with ID: ${_id}`);
+      throw new Error('logout-no-user');
     }
 
     await updateUserByIdService(user._id, { token: null });
@@ -139,7 +133,7 @@ const logoutController = async (req, res) => {
   } catch (error) {
     return res
       .status(400)
-      .json({ code: 'api-logout-error', message: error.message });
+      .json({ code: error.message });
   }
 };
 

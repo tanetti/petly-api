@@ -20,9 +20,7 @@ const userBodyValidation = (req, res, next) => {
   if (error) {
     const [firstError] = error.details;
 
-    return res
-      .status(400)
-      .json({ code: 'api-validation-error', message: firstError.message });
+    return res.status(400).json({ code: firstError.message });
   }
 
   next();

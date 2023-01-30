@@ -3,41 +3,41 @@ const joi = require('joi');
 
 const registerUserBodyValidationSchema = joi.object({
   email: joi.string().email().required().messages({
-    'string.base': "User's Email must be a string",
-    'string.email': "Incorrect format of user's Email",
-    'any.required': "User's Email was not specified",
+    'string.base': 'register-email-format-error',
+    'string.email': 'register-email-format-error',
+    'any.required': 'register-email-required-error',
   }),
 
   password: joi.string().min(8).required().messages({
-    'string.base': "User's Password must be a string",
-    'string.min': "User's Password must contain 8 or above symbols",
-    'any.required': "User's Password was not specified",
+    'string.base': 'register-password-format-error',
+    'string.min': 'register-password-length-error',
+    'any.required': 'register-password-format-error',
   }),
 
   name: joi.string().messages({
-    'string.base': "User's Name must be a string",
+    'string.base': 'register-name-format-error',
   }),
 
   address: joi.string().messages({
-    'string.base': "User's Address must be a string",
+    'string.base': 'register-address-format-error',
   }),
 
   phone: joi.string().messages({
-    'string.base': "User's Phone number must be a string",
+    'string.base': 'register-phone-format-error',
   }),
 });
 
 const loginUserBodyValidationSchema = joi.object({
   email: joi.string().email().required().messages({
-    'string.base': "User's Email must be a string",
-    'string.email': "Incorrect format of user's Email",
-    'any.required': "User's Email was not specified",
+    'string.base': 'login-email-format-error',
+    'string.email': 'login-email-format-error',
+    'any.required': 'login-email-required-error',
   }),
 
   password: joi.string().min(8).required().messages({
-    'string.base': "User's Password must be a string",
-    'string.min': "User's Password must contain 8 or above symbols",
-    'any.required': "User's Password was not specified",
+    'string.base': 'login-password-format-error',
+    'string.min': 'login-password-length-error',
+    'any.required': 'login-password-format-error',
   }),
 });
 
