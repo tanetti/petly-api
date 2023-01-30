@@ -11,7 +11,7 @@ const registerUserBodyValidationSchema = joi.object({
   password: joi.string().min(8).required().messages({
     'string.base': 'register-password-format-error',
     'string.min': 'register-password-length-error',
-    'any.required': 'register-password-format-error',
+    'any.required': 'register-password-required-error',
   }),
 
   name: joi.string().messages({
