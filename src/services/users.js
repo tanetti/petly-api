@@ -1,6 +1,6 @@
-const User = require("../models/user");
+const User = require('../models/user');
 
-const signupUserService = async (userData) => {
+const registerUserService = async userData => {
   const user = new User(userData);
 
   const result = await user.save();
@@ -8,13 +8,13 @@ const signupUserService = async (userData) => {
   return result;
 };
 
-const findUserByObjectOfParameters = async (object) => {
+const findUserByObjectOfParameters = async object => {
   const user = await User.findOne(object);
 
   return user;
 };
 
-const findUserByIdService = async (_id) => {
+const findUserByIdService = async _id => {
   const user = await User.findById(_id);
 
   return user;
@@ -25,7 +25,7 @@ const updateUserByIdService = async (_id, body) => {
 };
 
 module.exports = {
-  signupUserService,
+  registerUserService,
   findUserByObjectOfParameters,
   findUserByIdService,
   updateUserByIdService,
