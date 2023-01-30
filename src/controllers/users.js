@@ -46,6 +46,7 @@ const loginController = async (req, res) => {
       name,
       address,
       phone,
+      birthday,
       avatarURL,
       favoriteNotices,
     } = user;
@@ -70,6 +71,7 @@ const loginController = async (req, res) => {
         name,
         address,
         phone,
+        birthday,
         avatarURL,
         favoriteNotices,
       },
@@ -98,6 +100,7 @@ const refreshController = async (req, res) => {
       name,
       address,
       phone,
+      birthday,
       avatarURL,
       favoriteNotices,
     } = user;
@@ -107,6 +110,7 @@ const refreshController = async (req, res) => {
       name,
       address,
       phone,
+      birthday,
       avatarURL,
       favoriteNotices,
     };
