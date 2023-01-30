@@ -18,7 +18,7 @@ const registerController = async (req, res) => {
     res.status(201).json({ email });
   } catch (error) {
     if (error.code === 11000) {
-      return res.status(409).json({ code: 'register-email-in-use-error' });
+      return res.status(409).json({ code: 'register-email-0102' });
     }
 
     return res.status(400).json({ code: error.message });
@@ -32,7 +32,7 @@ const loginController = async (req, res) => {
     const user = await findUserByObjectOfParameters({ email: requestEmail });
 
     if (!user) {
-      throw new Error('login-no-user');
+      throw new Error('login-0100');
     }
 
     const {
@@ -53,7 +53,7 @@ const loginController = async (req, res) => {
     );
 
     if (!isUsersPasswordMatch) {
-      throw new Error('login-wrong-password');
+      throw new Error('login-0101');
     }
 
     const token = jwt.sign({ _id }, process.env.JWT_SECRET);
