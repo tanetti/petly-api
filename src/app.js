@@ -19,8 +19,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(authRoutes)
 
 
+app.use('/api/news', newsRouter);
+
 app.use((req, res) => {
-    res.status(404).json({ code: "not-found", message: "Path wasn't found" });
+  res.status(404).json({ code: 'not-found', message: "Path wasn't found" });
 });
 
 
