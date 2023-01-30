@@ -21,7 +21,9 @@ const registerController = async (req, res) => {
       return res.status(409).json({ code: 'register-email-in-use-error' });
     }
 
-    return res.status(400).json({ code: error.message });
+    return res
+      .status(400)
+      .json({ code: 'register-general-error', message: error.message });
   }
 };
 
@@ -75,7 +77,9 @@ const loginController = async (req, res) => {
 
     res.json(result);
   } catch (error) {
-    return res.status(401).json({ code: error.message });
+    return res
+      .status(401)
+      .json({ code: 'login-general-error', message: error.message });
   }
 };
 
@@ -113,7 +117,7 @@ const refreshController = async (req, res) => {
   } catch (error) {
     return res
       .status(400)
-      .json({ code: error.message });
+      .json({ code: 'refresh-general-error', message: error.message });
   }
 };
 
@@ -133,7 +137,7 @@ const logoutController = async (req, res) => {
   } catch (error) {
     return res
       .status(400)
-      .json({ code: error.message });
+      .json({ code: 'logout-general-error', message: error.message });
   }
 };
 
