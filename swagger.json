@@ -204,9 +204,12 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/FriendsResponse"
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/FriendResponse"
+                                    }
                                 }
-                            }
+                            }   
                         }
                     },
                     "404": {
@@ -233,7 +236,10 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/NewsResponse"
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/NewsItemResponse"
+                                    }
                                 }
                             }
                         }
@@ -262,7 +268,82 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/SellNoticesResponse"
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/NoticesItemResponse"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {}
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "content": {}
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {}
+                    }
+                }
+            }
+        },
+        "/notices/lost-found": {
+            "get": {
+                "tags": ["Notices"],
+                "summary": "Lost-found advertisements",
+                "parameters": [],
+                "security": [{ "Bearer": [] }],
+
+                "responses": {
+                    "201": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/NoticesItemResponse"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {}
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "content": {}
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {}
+                    }
+                }
+            }
+        },
+        "/notices/for-free": {
+            "get": {
+                "tags": ["Notices"],
+                "summary": "For-free advertisements",
+                "parameters": [],
+                "security": [{ "Bearer": [] }],
+
+                "responses": {
+                    "201": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/NoticesItemResponse"
+                                    }
                                 }
                             }
                         }
@@ -325,7 +406,7 @@
                     }
                 }
             },
-            "FriendItem": {
+            "FriendResponse": {
                 "type": "object",
                 "properties": {
                     "title": {
@@ -348,6 +429,16 @@
                       "description": "Company's address",
                       "example": "Fedorivka, Kyiv Oblast, Ukraine, 07372"
                     },
+                    "phone": {
+                      "type": "number",
+                      "description": "Company's phone number",
+                      "example": "+380442900329"
+                    },
+                    "email": {
+                      "type": "string",
+                      "description": "Company's email",
+                      "example": "hello@happypaw.ua"
+                    },
                     "workDays": {
                         "type": "array",
                         "items": {
@@ -367,30 +458,15 @@
                                 }
                             }
                         },
+                        
                         "example": [
                             { "isOpen": true, "from": "09:00", "to": "17:00" },
                             { "isOpen": true, "from": "09:00", "to": "17:00" }
                         ]
-                    },  
-                    "phone": {
-                      "type": "number",
-                      "description": "Company's phone number",
-                      "example": "+380442900329"
-                    },
-                    "email": {
-                      "type": "string",
-                      "description": "Company's email",
-                      "example": "hello@happypaw.ua"
-                    }
+                    }  
                 }
             },
-            "FriendsResponse": {
-                "type": "array",
-                "items": {
-                    "$ref": "#/components/schemas/FriendItem"
-                }   
-            },
-            "NewsItem": {
+            "NewsItemResponse": {
                 "type": "object",
                 "properties": {
                     "title": {
@@ -413,13 +489,7 @@
                     }
                 }
             },
-            "NewsResponse": {
-                "type": "array",
-                "items": {
-                    "$ref": "#/components/schemas/NewsItem"
-                }   
-            },
-            "SellNoticesItem": {
+            "NoticesItemResponse": {
                 "type": "object",
                 "properties": {
                     "title": {
@@ -446,14 +516,18 @@
                       "type": "string",
                       "description": "Sell advertisement price",
                       "example": "50$"
+                    },
+                    "favorite": {
+                      "type": "boolean",
+                      "description": "Added to favorites list"
+                    },
+                    "category": {
+                      "type": "string",
+                      "description": "Sell advertisement category",
+                      "example": "sell",
+                      "enum": ""
                     }
                 }
-            },
-            "SellNoticesResponse": {
-                "type": "array",
-                "items": {
-                    "$ref": "#/components/schemas/SellNoticesItem"
-                }   
             }
         },
         
