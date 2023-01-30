@@ -1,11 +1,11 @@
 const express = require("express");
 
-const ctrl = require("../controllers");
+const getServices = require("../controllers/getServices");
 
 const { ctrlWrapper } = require("../helpers");
 
-const router = express.Router();
+const router = new express.Router();
 
-router.get("/", ctrlWrapper(ctrl.getServices));
+router.get("/", ctrlWrapper(getServices));
 
 module.exports = router;
