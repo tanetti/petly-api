@@ -78,7 +78,7 @@ user.pre("save", async function(next) {
 
 const userSchemaValid = Joi.object({
     email: Joi.string().min(6).required(),
-    password: Joi.string().min(6).required(),
+    password: Joi.string().min(7).required(),
     name: Joi.string().min(3).required(),
     location: Joi.string().min(2).required(),
     number: Joi.number().min(10).required(),
