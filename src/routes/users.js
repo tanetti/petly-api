@@ -13,7 +13,7 @@ const {
 
 router.post('/register', userBodyValidation, registerController);
 router.post('/login', userBodyValidation, loginController);
-router.post('/refresh', authHeaderValidation, refreshController);
+router.get('/refresh', authHeaderValidation, refreshController);
 router.post('/logout', authHeaderValidation, logoutController);
 
 module.exports = router;
