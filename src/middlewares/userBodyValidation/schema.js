@@ -34,9 +34,8 @@ const loginUserBodyValidationSchema = joi.object({
     'any.required': 'login-email-required-error',
   }),
 
-  password: joi.string().min(8).required().messages({
+  password: joi.string().required().messages({
     'string.base': 'login-password-format-error',
-    'string.min': 'login-password-length-error',
     'any.required': 'login-password-required-error',
   }),
 });
