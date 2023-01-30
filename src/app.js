@@ -2,12 +2,11 @@ const express = require('express');
 const logger = require('morgan');
 const cors = require('cors');
 
-const ourFriendsRouter = require("./routes/ourFriends");
-
 const app = express();
 
 const usersRouter = require('./routes/users');
 const newsRouter = require('./routes/news');
+const servicesRouter = require('./routes/services');
 
 const formatsLogger = app.get('env') === 'development' ? 'dev' : 'short';
 
@@ -18,7 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/users', usersRouter);
 app.use('/api/news', newsRouter);
-app.use("/api/services", ourFriendsRouter);
+app.use('/api/services', servicesRouter);
 
 app.use((req, res) => {
   res.status(404).json({ code: 'not-found', message: "Path wasn't found" });
