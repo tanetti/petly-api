@@ -4,7 +4,7 @@ const addSchema = Joi.object({
   title: Joi.string().min(2).max(48).required(),
   name: Joi.string().min(2).max(16).required(),
   birthdate: Joi.date().messages({ valid: 'format MM-DD-YYYY' }),
-  bread: Joi.string().min(2).max(24),
+  breed: Joi.string().min(2).max(24),
   location: Joi.string(),
   comments: Joi.string()
     .regex(/^[,. a-z0-9]+$/)
