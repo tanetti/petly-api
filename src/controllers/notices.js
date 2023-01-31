@@ -7,13 +7,17 @@ const getCategory = async (req, res, next) => {
   try {
     const { categoryName } = req.params;
 
-    const { page = 1, limit = 200 } = req.query;
+    const { page = 1, limit = 200, search = '' } = req.query;
 
     const skip = (page - 1) * limit;
-    const result = await Notice.find({ category: categoryName }, '', {
-      skip,
-      limit: Number(limit),
-    }).populate('owner', '_id email');
+    const result = await Notice.find(
+      { category: categoryName, title: { $regex: `${search}` } },
+      '',
+      {
+        skip,
+        limit: Number(limit),
+      }
+    ).populate('owner', '_id email');
     if (!result) {
       throw HttpError(404, 'Not found');
     }
@@ -104,35 +108,10 @@ const deleteNotice = async (req, res, next) => {
   }
 };
 
-const getSearchTitle = async (req, res, next) => {
-  try {
-    const { searchWords } = req.params;
-
-    const { page = 1, limit = 200 } = req.query;
-
-    const skip = (page - 1) * limit;
-    const result = await Notice.find(
-      { title: { $regex: `${searchWords}` } },
-      '',
-      {
-        skip,
-        limit: Number(limit),
-      }
-    );
-    res.json(result);
-    if (!result) {
-      throw HttpError(404, 'Not found');
-    }
-  } catch (error) {
-    next(error);
-  }
-};
-
 module.exports = {
   getCategory,
   getById,
   getOwn,
   addNotice,
   deleteNotice,
-  getSearchTitle,
 };

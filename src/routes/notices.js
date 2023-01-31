@@ -13,7 +13,6 @@ const {
   getOwn,
   addNotice,
   deleteNotice,
-  getSearchTitle,
 } = require('../controllers/notices');
 
 const router = express.Router();
@@ -34,6 +33,5 @@ router.delete(
   noticeIdValidation,
   deleteNotice
 );
-router.get('/search/:searchWords', getSearchTitle);
 
 module.exports = router;
