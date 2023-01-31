@@ -11,8 +11,8 @@
       { "isOpen": false },
       { "isOpen": false },
       { "isOpen": false },
-      { "isOpen": true, "from": "11:00", "to": "16:00" },
-      { "isOpen": true, "from": "11:00", "to": "16:00" }
+      { "isOpen": true, "from": "11:00", "to": "16:00", "day": "SA" },
+      { "isOpen": true, "from": "11:00", "to": "16:00", "day": "SU" }
     ],
     "phone": "+380931934069",
     "email": null
@@ -24,13 +24,13 @@
     "imageUrl": "https://storage.googleapis.com/kidslikev2_bucket/pets-support/images/sponsors/frame_288.png",
     "address": "Київ, вулиця Шота Руставелі, 44 (3-й поверх, офіс 7)",
     "workDays": [
-      { "isOpen": true, "from": "09:00", "to": "17:00" },
-      { "isOpen": true, "from": "09:00", "to": "17:00" },
-      { "isOpen": true, "from": "09:00", "to": "17:00" },
-      { "isOpen": true, "from": "09:00", "to": "17:00" }, 
-      { "isOpen": true, "from": "09:00", "to": "17:00" },
-      { "isOpen": true, "from": "09:00", "to": "17:00" },
-      { "isOpen": true, "from": "09:00", "to": "17:00" }
+      { "isOpen": true, "from": "09:00", "to": "17:00", "day": "MD" },
+      { "isOpen": true, "from": "09:00", "to": "17:00", "day": "TU" },
+      { "isOpen": true, "from": "09:00", "to": "17:00", "day": "WE" },
+      { "isOpen": true, "from": "09:00", "to": "17:00", "day": "TH" },
+      { "isOpen": true, "from": "09:00", "to": "17:00", "day": "FR" },
+      { "isOpen": true, "from": "09:00", "to": "17:00", "day": "SA" },
+      { "isOpen": true, "from": "09:00", "to": "17:00", "day": "SU" }
     ],
     "phone": "+380442900329",
     "email": "hello@happypaw.ua"
@@ -82,13 +82,13 @@
     "imageUrl": "https://storage.googleapis.com/kidslikev2_bucket/pets-support/images/sponsors/frame_292.png",
     "address": "вулиця Другетів, 77, Ужгород, Закарпатська область, 88003",
     "workDays": [
-      { "isOpen": true, "from": "09:00", "to": "20:00" },
-      { "isOpen": true, "from": "09:00", "to": "20:00" },
-      { "isOpen": true, "from": "09:00", "to": "20:00" },
-      { "isOpen": true, "from": "09:00", "to": "20:00" },
-      { "isOpen": true, "from": "09:00", "to": "20:00" },
-      { "isOpen": true, "from": "09:00", "to": "20:00" },
-      { "isOpen": true, "from": "09:00", "to": "20:00" }
+      { "isOpen": true, "from": "09:00", "to": "20:00", "day": "MD" },
+      { "isOpen": true, "from": "09:00", "to": "20:00", "day": "TU" },
+      { "isOpen": true, "from": "09:00", "to": "20:00", "day": "WE" },
+      { "isOpen": true, "from": "09:00", "to": "20:00", "day": "TH" },
+      { "isOpen": true, "from": "09:00", "to": "20:00", "day": "FR" },
+      { "isOpen": true, "from": "09:00", "to": "20:00", "day": "SA" },
+      { "isOpen": true, "from": "09:00", "to": "20:00", "day": "SU" }
     ],
     "phone": null,
     "email": null
@@ -119,13 +119,13 @@
     "imageUrl": "https://storage.googleapis.com/kidslikev2_bucket/pets-support/images/sponsors/frame_291.png",
     "address": null,
     "workDays": [
-      { "isOpen": true, "from": "09:00", "to": "17:00" },
-      { "isOpen": true, "from": "09:00", "to": "17:00" },
-      { "isOpen": true, "from": "09:00", "to": "17:00" },
-      { "isOpen": true, "from": "09:00", "to": "17:00" },
-      { "isOpen": true, "from": "09:00", "to": "17:00" },
-      { "isOpen": false, "from": "", "to": "" },
-      { "isOpen": false, "from": "", "to": "" }
+      { "isOpen": true, "from": "09:00", "to": "17:00", "day": "MD" },
+      { "isOpen": true, "from": "09:00", "to": "17:00", "day": "TU" },
+      { "isOpen": true, "from": "09:00", "to": "17:00", "day": "WE" },
+      { "isOpen": true, "from": "09:00", "to": "17:00", "day": "TH" },
+      { "isOpen": true, "from": "09:00", "to": "17:00", "day": "FR" },
+      { "isOpen": false, "from": "", "to": "", "day": "SA" },
+      { "isOpen": false, "from": "", "to": "", "day": "SU" }
     ],
     "phone": "+380800409060",
     "email": "info@josera.ua"
