@@ -18,7 +18,7 @@
             "description": "Authorization endpoints"
         },
         {
-            "name": "Services-sidebar",
+            "name": "Services",
             "description": "Partner contact information endpoints"
         },
         {
@@ -28,10 +28,6 @@
         {
             "name": "Notices",
             "description": "Notices endpoints"
-        },
-        {
-            "name": "User",
-            "description": "User endpoints"
         }
     ],
     "paths": {
@@ -63,21 +59,15 @@
                             }
                         }
                     },
-                     "400": {
-                        "description": "Bad Request",
-                        "content": {}
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {}
-                    },
-                    "409": {
-                        "description": "Provided email already exists",
-                        "content": {}
-                    },
-                    "500": {
-                        "description": "Server error",
-                        "content": {}
+                    "Error": {
+                        "description": "Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -110,21 +100,15 @@
                             }
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
-                        "content": {}
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {}
-                    },
-                    "409": {
-                        "description": "Provided email already exists",
-                        "content": {}
-                    },
-                    "500": {
-                        "description": "Server error",
-                        "content": {}
+                   "Error": {
+                        "description": "Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -180,20 +164,22 @@
                 "security": [{ "Bearer": [] }],
                 "requestBody": {},
                 "responses": {
-                    "204": {
-                        "description": "No Content",
-                        "content": {}
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {}
+                    "Error": {
+                        "description": "Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
                     }
                 }
             }
         },
         "/friends": {
             "get": {
-                "tags": ["Friends"],
+                "tags": ["Services"],
                 "summary": "Partner contact information",
                 "parameters": [],
                 "security": [{ "Bearer": [] }],
@@ -212,13 +198,15 @@
                             }   
                         }
                     },
-                    "404": {
-                        "description": "Not found",
-                        "content": {}
-                    },
-                    "500": {
-                        "description": "Server error",
-                        "content": {}
+                    "Error": {
+                        "description": "Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -244,13 +232,15 @@
                             }
                         }
                     },
-                    "404": {
-                        "description": "Not found",
-                        "content": {}
-                    },
-                    "500": {
-                        "description": "Server error",
-                        "content": {}
+                    "Error": {
+                        "description": "Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -276,17 +266,15 @@
                             }
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
-                        "content": {}
-                    },
-                    "404": {
-                        "description": "Not found",
-                        "content": {}
-                    },
-                    "500": {
-                        "description": "Server error",
-                        "content": {}
+                    "Error": {
+                        "description": "Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -312,17 +300,15 @@
                             }
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
-                        "content": {}
-                    },
-                    "404": {
-                        "description": "Not found",
-                        "content": {}
-                    },
-                    "500": {
-                        "description": "Server error",
-                        "content": {}
+                    "Error": {
+                        "description": "Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -348,17 +334,142 @@
                             }
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
-                        "content": {}
+                    "Error": {
+                        "description": "Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/notices/favorite": {
+            "get": {
+                "tags": ["Notices"],
+                "summary": "Advertisements added to favorite",
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "header",
+                        "description": "Token to be passed as a header",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                            "type": "integer",
+                            "format": "int64"
+                            }
+                        },
+                        "style": "simple"
                     },
-                    "404": {
-                        "description": "Not found",
-                        "content": {}
+                    {   
+                        "name": "_id",
+                        "in": "path",
+                        "description": "Id of user",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "fdhrj524tr5j4rtjty54jt"
                     },
-                    "500": {
-                        "description": "Server error",
-                        "content": {}
+                    {   
+                        "name": "favorite",
+                        "in": "path",
+                        "description": "Favorite parameter",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                ],
+                "security": [{ "Bearer": [] }],
+
+                "responses": {
+                    "201": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/NoticesItemResponse"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "Error": {
+                        "description": "Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/notices/own": {
+            "get": {
+                "tags": ["Notices"],
+                "summary": "User advertisements list ",
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "header",
+                        "description": "Token to be passed as a header",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                            "type": "integer",
+                            "format": "int64"
+                            }
+                        },
+                        "style": "simple"
+                    },
+                    {   
+                        "name": "_id",
+                        "in": "path",
+                        "description": "Id of user",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "fdhrj524tr5j4rtjty54jt"
+                    }
+                ],
+                "security": [{ "Bearer": [] }],
+
+                "responses": {
+                    "201": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/NoticesItemResponse"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "Error": {
+                        "description": "Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -399,11 +510,48 @@
                         "type": "string",
                         "description": "User's token"
                     },
-                    "email": {
-                        "type": "string",
-                        "description": "User's email",
-                        "format": "email"
-                    }
+                    "user": {
+                        "type": "object",
+                        "properties": {
+                            "userEmail": {
+                                "type": "string",
+                                "description": "User email",
+                                "format": "email",
+                                "example": "Anna12@gmail.com"
+                            },
+                            "name": {
+                                "type": "string",
+                                "description": "User name",
+                                "example": "Anna"
+                                },
+                            "address": {
+                                "type": "string",
+                                "description": "User address",
+                                "example": "Kyiv"
+                            },
+                            "phone": {
+                                "type": "number",
+                                "description": "User phone number",
+                                "example": "+380998085001"
+                            },
+                            "birthday": {
+                                "type": "number",
+                                "description": "User birthday",
+                                "example": "11.03.1998"
+                            },
+                            "avatarURL": {
+                                "type": "string",
+                                "description": "User avatar",
+                                "example": "https://storage.googleapis.com/kidslikev2_bucket/pets-support/images/sponsors/frame_287.png"
+                            },
+                            "favoriteNotices": {
+                                "type": "array",       
+                                "items": {
+                                    "$ref": "#/components/schemas/NoticesItemResponse"
+                                }   
+                            }
+                        }
+                    }   
                 }
             },
             "FriendResponse": {
@@ -524,13 +672,25 @@
                     "category": {
                       "type": "string",
                       "description": "Sell advertisement category",
-                      "example": "sell",
-                      "enum": ""
+                      "example": "sell"
                     }
                 }
+            },
+            "Error": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "integer",
+                        "format": "int32",
+                        "example": "404"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Not found"
+                    }
+                }    
             }
         },
-        
         "securitySchemes": {
             "Bearer": {
                 "type": "http",
