@@ -133,9 +133,30 @@ const logoutController = async (req, res) => {
   }
 };
 
+const updateFavorite = async (req, res) => {
+  try {
+    console.log('updateFaforite');
+  } catch (error) {}
+};
+
+const getFavorite = async (req, res) => {
+  try {
+    console.log('getFavorite');
+  } catch (error) {}
+};
+
+const deleteFavorite = async (req, res) => {
+  try {
+    console.log('deleteFavorite');
+  } catch (error) {}
+};
+
 module.exports = {
   registerController,
   loginController,
   refreshController,
   logoutController,
+  updateFavorite,
+  getFavorite,
+  deleteFavorite,
 };
