@@ -3,6 +3,7 @@ const router = new express.Router();
 
 const userBodyValidation = require('../middlewares/userBodyValidation/validation');
 const authHeaderValidation = require('../middlewares/authHeaderValidation');
+const upload = require('../middlewares/notices');
 
 const {
   registerController,
@@ -14,6 +15,7 @@ const {
   getFavoriteController,
   deleteFavoriteController,
   getCurrentController,
+  updateAvatarController,
 } = require('../controllers/users');
 
 router.post('/register', userBodyValidation, registerController);
@@ -34,6 +36,13 @@ router.delete(
   '/favorite/:noticeId',
   authHeaderValidation,
   deleteFavoriteController
+);
+
+router.patch(
+  '/avatars',
+  authHeaderValidation,
+  upload.single('avatar'),
+  updateAvatarController
 );
 
 module.exports = router;

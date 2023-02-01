@@ -1,10 +1,14 @@
 const Notice = require('../models/notices');
 const User = require('../models/user');
 const HttpError = require('../helpers/HttpError');
+const path = require('path');
+const fs = require('fs/promises');
 
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
+
+const avatarsDir = path.join(__dirname, '../', 'public', 'avatars');
 
 const {
   registerUserService,
@@ -257,6 +261,22 @@ const deleteFavoriteController = async (req, res, next) => {
   }
 };
 
+const updateAvatarController = async (req, res) => {
+  const { path: tempUpload, originalname } = req.file;
+  const { _id: id } = req.user;
+  const imageName = `${id}_${originalname}`;
+  try {
+    const resultUpload = path.join(avatarsDir, imageName);
+    await fs.rename(tempUpload, resultUpload);
+    const avatarURl = path.join('public', 'avatars', imageName);
+    await User.findByIdAndUpdate(id, { avatarURl });
+    res.json({ avatarURl });
+  } catch (error) {
+    await fs.unlink(tempUpload);
+    throw error;
+  }
+};
+
 module.exports = {
   registerController,
   loginController,
@@ -267,4 +287,5 @@ module.exports = {
   updateFavoriteController,
   getFavoriteController,
   deleteFavoriteController,
+  updateAvatarController,
 };
