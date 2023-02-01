@@ -137,6 +137,41 @@ const logoutController = async (req, res) => {
   }
 };
 
+const getCurrentController = async (req, res) => {
+  const { email, name, address, phone, birthday, avatarURL, favoriteNotices } =
+    req.user;
+
+  const result = {
+    user: {
+      email,
+      name,
+      address,
+      phone,
+      birthday,
+      avatarURL,
+      favoriteNotices,
+    },
+  };
+
+  res.status(200).json(result);
+};
+
+const getOwnController = async (req, res, next) => {
+  try {
+    const { _id } = req.user;
+    const { page = 1, limit = 200 } = req.query;
+
+    const skip = (page - 1) * limit;
+    const result = await Notice.find({ owner: _id }, '', {
+      skip,
+      limit: Number(limit),
+    }).populate('owner', '_id');
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const updateFavoriteController = async (req, res, next) => {
   try {
     const { _id } = req.user;
@@ -222,49 +257,14 @@ const deleteFavoriteController = async (req, res, next) => {
   }
 };
 
-const getOwnController = async (req, res, next) => {
-  try {
-    const { _id } = req.user;
-    const { page = 1, limit = 200 } = req.query;
-
-    const skip = (page - 1) * limit;
-    const result = await Notice.find({ owner: _id }, '', {
-      skip,
-      limit: Number(limit),
-    }).populate('owner', '_id');
-    res.json(result);
-  } catch (error) {
-    next(error);
-  }
-};
-
-const getCurrentController = async (req, res, next) => {
-  const { email, name, address, phone, birthday, avatarURL, favoriteNotices } =
-    req.user;
-
-  const result = {
-    user: {
-      email,
-      name,
-      address,
-      phone,
-      birthday,
-      avatarURL,
-      favoriteNotices,
-    },
-  };
-
-  res.status(200).json(result);
-};
-
 module.exports = {
   registerController,
   loginController,
   refreshController,
   logoutController,
+  getCurrentController,
   getOwnController,
   updateFavoriteController,
   getFavoriteController,
   deleteFavoriteController,
-  getCurrentController,
 };

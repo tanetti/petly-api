@@ -20,7 +20,9 @@ router.post('/register', userBodyValidation, registerController);
 router.post('/login', userBodyValidation, loginController);
 router.get('/refresh', authHeaderValidation, refreshController);
 router.post('/logout', authHeaderValidation, logoutController);
+
 router.get('/own', authHeaderValidation, getOwnController);
+router.get('/current', authHeaderValidation, getCurrentController);
 
 router.patch(
   '/favorite/:noticeId',
@@ -33,7 +35,5 @@ router.delete(
   authHeaderValidation,
   deleteFavoriteController
 );
-
-router.get('/current', authHeaderValidation, getCurrentController);
 
 module.exports = router;
