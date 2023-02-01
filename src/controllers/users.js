@@ -269,7 +269,7 @@ const updateAvatarController = async (req, res) => {
     const resultUpload = path.join(avatarsDir, imageName);
     await fs.rename(tempUpload, resultUpload);
     const avatarURl = path.join('public', 'avatars', imageName);
-    await User.findByIdAndUpdate(id, { avatarURl });
+    await User.findByIdAndUpdate(id, { avatarURl }); // or create;
     res.json({ avatarURl });
   } catch (error) {
     await fs.unlink(tempUpload);
