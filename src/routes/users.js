@@ -9,6 +9,7 @@ const {
   loginController,
   refreshController,
   logoutController,
+  getOwn,
   updateFavorite,
   getFavorite,
   deleteFavorite,
@@ -18,6 +19,7 @@ router.post('/register', userBodyValidation, registerController);
 router.post('/login', userBodyValidation, loginController);
 router.get('/refresh', authHeaderValidation, refreshController);
 router.post('/logout', authHeaderValidation, logoutController);
+router.get('/own', authHeaderValidation, getOwn);
 
 router.patch('/favorite', authHeaderValidation, updateFavorite);
 router.get('/favorite', authHeaderValidation, getFavorite);
