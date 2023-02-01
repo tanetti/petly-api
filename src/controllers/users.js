@@ -1,4 +1,7 @@
 const Notice = require('../models/notices');
+const User = require('../models/user');
+const HttpError = require('../helpers/HttpError');
+
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
@@ -134,22 +137,89 @@ const logoutController = async (req, res) => {
   }
 };
 
-const updateFavorite = async (req, res) => {
+const updateFavorite = async (req, res, next) => {
   try {
-    console.log('updateFaforite');
-  } catch (error) {}
+    const { _id } = req.user;
+
+    const { noticeId } = req.params;
+
+    const { favoriteNotices } = await User.findOne({
+      _id: _id,
+    });
+
+    const newFavoriteNotices = !favoriteNotices.includes(noticeId)
+      ? [...favoriteNotices, noticeId]
+      : favoriteNotices;
+
+    const result = await User.findByIdAndUpdate(
+      { _id: _id },
+      { favoriteNotices: newFavoriteNotices }
+    );
+    if (!result) {
+      throw HttpError(404, 'Not found');
+    }
+    res.json(newFavoriteNotices);
+  } catch (error) {
+    next(error);
+  }
 };
 
-const getFavorite = async (req, res) => {
+const getFavorite = async (req, res, next) => {
   try {
-    console.log('getFavorite');
-  } catch (error) {}
+    const { page = 1, limit = 200 } = req.query;
+    const { _id } = req.user;
+
+    const { favoriteNotices } = await User.findOne({
+      _id: _id,
+    });
+
+    const skip = (page - 1) * limit;
+    const result = await Notice.find(
+      { _id: favoriteNotices.map(noticeId => noticeId) },
+      '',
+      {
+        skip,
+        limit: Number(limit),
+      }
+    ).populate('owner', '_id email');
+
+    if (!result) {
+      throw HttpError(404, 'Not found');
+    }
+
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
 };
 
-const deleteFavorite = async (req, res) => {
+const deleteFavorite = async (req, res, next) => {
   try {
-    console.log('deleteFavorite');
-  } catch (error) {}
+    const { _id } = req.user;
+
+    const { noticeId } = req.params;
+
+    const { favoriteNotices } = await User.findOne({
+      _id: _id,
+    });
+
+    const deletedIdIndex = favoriteNotices.findIndex(
+      id => id === `${noticeId}`
+    );
+
+    favoriteNotices.splice(deletedIdIndex, 1);
+
+    const result = await User.findByIdAndUpdate(
+      { _id: _id },
+      { favoriteNotices: favoriteNotices }
+    );
+    if (!result) {
+      throw HttpError(404, 'Not found');
+    }
+    res.json(favoriteNotices);
+  } catch (error) {
+    next(error);
+  }
 };
 
 const getOwn = async (req, res, next) => {

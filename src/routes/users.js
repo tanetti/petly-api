@@ -21,8 +21,8 @@ router.get('/refresh', authHeaderValidation, refreshController);
 router.post('/logout', authHeaderValidation, logoutController);
 router.get('/own', authHeaderValidation, getOwn);
 
-router.patch('/favorite', authHeaderValidation, updateFavorite);
+router.patch('/favorite/:noticeId', authHeaderValidation, updateFavorite);
 router.get('/favorite', authHeaderValidation, getFavorite);
-router.delete('/favorite', authHeaderValidation, deleteFavorite);
+router.delete('/favorite/:noticeId', authHeaderValidation, deleteFavorite);
 
 module.exports = router;
