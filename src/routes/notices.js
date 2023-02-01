@@ -10,7 +10,6 @@ const {
 const {
   getCategory,
   getById,
-  getOwn,
   addNotice,
   deleteNotice,
 } = require('../controllers/notices');
@@ -26,7 +25,6 @@ router.post(
   upload.single('avatar'),
   addNotice
 );
-router.get('/', authHeaderValidation, getOwn);
 router.delete(
   '/:noticeId',
   authHeaderValidation,
