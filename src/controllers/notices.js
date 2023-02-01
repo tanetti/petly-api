@@ -44,27 +44,6 @@ const getById = async (req, res, next) => {
   }
 };
 
-const getOwn = async (req, res, next) => {
-  try {
-    const { _id } = req.user;
-    const {
-      page = 1,
-      limit = 200,
-      // favorite = { $exists: true || false },
-    } = req.query;
-
-    const skip = (page - 1) * limit;
-    // const result = await Notice.find({ owner: _id, favorite: favorite }, '', {
-    const result = await Notice.find({ owner: _id }, '', {
-      skip,
-      limit: Number(limit),
-    }).populate('owner', '_id');
-    res.json(result);
-  } catch (error) {
-    next(error);
-  }
-};
-
 const avatarsDir = path.join(__dirname, '../', 'public', 'avatars');
 
 const addNotice = async (req, res, next) => {
@@ -111,7 +90,6 @@ const deleteNotice = async (req, res, next) => {
 module.exports = {
   getCategory,
   getById,
-  getOwn,
   addNotice,
   deleteNotice,
 };
