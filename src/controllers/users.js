@@ -137,7 +137,7 @@ const logoutController = async (req, res) => {
   }
 };
 
-const updateFavorite = async (req, res, next) => {
+const updateFavoriteController = async (req, res, next) => {
   try {
     const { _id } = req.user;
 
@@ -164,7 +164,7 @@ const updateFavorite = async (req, res, next) => {
   }
 };
 
-const getFavorite = async (req, res, next) => {
+const getFavoriteController = async (req, res, next) => {
   try {
     const { page = 1, limit = 200 } = req.query;
     const { _id } = req.user;
@@ -193,7 +193,7 @@ const getFavorite = async (req, res, next) => {
   }
 };
 
-const deleteFavorite = async (req, res, next) => {
+const deleteFavoriteController = async (req, res, next) => {
   try {
     const { _id } = req.user;
 
@@ -222,7 +222,7 @@ const deleteFavorite = async (req, res, next) => {
   }
 };
 
-const getOwn = async (req, res, next) => {
+const getOwnController = async (req, res, next) => {
   try {
     const { _id } = req.user;
     const { page = 1, limit = 200 } = req.query;
@@ -238,13 +238,33 @@ const getOwn = async (req, res, next) => {
   }
 };
 
+const getCurrentController = async (req, res, next) => {
+  const { email, name, address, phone, birthday, avatarURL, favoriteNotices } =
+    req.user;
+
+  const result = {
+    user: {
+      email,
+      name,
+      address,
+      phone,
+      birthday,
+      avatarURL,
+      favoriteNotices,
+    },
+  };
+
+  res.status(200).json(result);
+};
+
 module.exports = {
   registerController,
   loginController,
   refreshController,
   logoutController,
-  updateFavorite,
-  getFavorite,
-  deleteFavorite,
-  getOwn,
+  getOwnController,
+  updateFavoriteController,
+  getFavoriteController,
+  deleteFavoriteController,
+  getCurrentController,
 };
