@@ -16,6 +16,7 @@ const {
   deleteFavoriteController,
   getCurrentController,
   updateAvatarController,
+  deleteAvatarsController,
 } = require('../controllers/users');
 
 router.post('/register', userBodyValidation, registerController);
@@ -44,5 +45,6 @@ router.patch(
   upload.single('avatar'),
   updateAvatarController
 );
+router.delete('/avatars', authHeaderValidation, deleteAvatarsController);
 
 module.exports = router;

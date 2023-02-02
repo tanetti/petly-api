@@ -273,17 +273,32 @@ const deleteFavoriteController = async (req, res, next) => {
 
 const updateAvatarController = async (req, res) => {
   const { path: tempUpload, originalname } = req.file;
-  const { _id: id } = req.user;
-  const imageName = `${id}_${originalname}`;
+  const { _id } = req.user;
+  const imageName = `${_id}_${originalname}`;
   try {
     const resultUpload = path.join(avatarsDir, imageName);
     await fs.rename(tempUpload, resultUpload);
     const avatarURl = path.join('public', 'avatars', imageName);
-    await User.findByIdAndUpdate(id, { avatarURl }); // or create;
+    await User.findByIdAndUpdate(_id, { avatarURl }); // or create;
     res.json({ avatarURl });
   } catch (error) {
     await fs.unlink(tempUpload);
     throw error;
+  }
+};
+
+const deleteAvatarsController = async (req, res, next) => {
+  try {
+    const { _id } = req.user;
+
+    const result = await User.findByIdAndUpdate(_id, { avatarURl: null });
+
+    if (result === null) {
+      throw HttpError(404, 'Not found');
+    }
+    res.json(result);
+  } catch (error) {
+    next(error);
   }
 };
 
@@ -298,4 +313,5 @@ module.exports = {
   getFavoriteController,
   deleteFavoriteController,
   updateAvatarController,
+  deleteAvatarsController,
 };
