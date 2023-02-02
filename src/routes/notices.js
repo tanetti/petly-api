@@ -8,6 +8,7 @@ const {
   upload,
 } = require('../middlewares/notices');
 const {
+  getAll,
   getCategory,
   getById,
   addNotice,
@@ -16,6 +17,7 @@ const {
 
 const router = express.Router();
 
+router.get('/', getAll);
 router.get('/:categoryName', getCategory);
 router.get('/:noticeId', noticeIdValidation, getById);
 router.post(

@@ -3,6 +3,21 @@ const HttpError = require('../helpers/HttpError');
 const path = require('path');
 const fs = require('fs/promises');
 
+const getAll = async (req, res, next) => {
+  try {
+    const { page = 1, limit = 200, search = '' } = req.query;
+
+    const skip = (page - 1) * limit;
+    const result = await Notice.find({ title: { $regex: `${search}` } }, '', {
+      skip,
+      limit: Number(limit),
+    }).populate('owner', '_id email');
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const getCategory = async (req, res, next) => {
   try {
     const { categoryName } = req.params;
@@ -106,6 +121,7 @@ const deleteNotice = async (req, res, next) => {
 };
 
 module.exports = {
+  getAll,
   getCategory,
   getById,
   addNotice,
