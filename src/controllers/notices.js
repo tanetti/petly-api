@@ -11,7 +11,7 @@ const getAll = async (req, res, next) => {
     const result = await Notice.find({ title: { $regex: `${search}` } }, '', {
       skip,
       limit: Number(limit),
-    }).populate('owner', '_id email');
+    }).populate('owner', '_id email phone');
     res.json(result);
   } catch (error) {
     next(error);
@@ -32,7 +32,7 @@ const getCategory = async (req, res, next) => {
         skip,
         limit: Number(limit),
       }
-    ).populate('owner', '_id email');
+    ).populate('owner', '_id email phone');
     if (!result) {
       throw HttpError(404, 'Not found');
     }
@@ -50,7 +50,7 @@ const getById = async (req, res, next) => {
     console.log(noticeId);
     const result = await Notice.findOne({
       _id: noticeId,
-    });
+    }).populate('owner', '_id email phone');
     if (!result) {
       throw HttpError(404, 'Not found');
     }
