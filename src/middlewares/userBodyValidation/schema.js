@@ -40,7 +40,32 @@ const loginUserBodyValidationSchema = joi.object({
   }),
 });
 
+const updateUserBodyValidationSchema = joi.object({
+  email: joi.string().email().messages({
+    'string.base': 'user-update-email-format-error',
+    'string.email': 'user-update-email-format-error',
+    'any.required': 'user-update-email-required-error',
+  }),
+
+  birthday: joi.string().messages({
+    'string.base': 'user-update-birthday-format-error',
+  }),
+
+  name: joi.string().messages({
+    'string.base': 'user-update-name-format-error',
+  }),
+
+  address: joi.string().messages({
+    'string.base': 'user-update-address-format-error',
+  }),
+
+  phone: joi.string().messages({
+    'string.base': 'user-update-phone-format-error',
+  }),
+});
+
 module.exports = {
   registerUserBodyValidationSchema,
   loginUserBodyValidationSchema,
+  updateUserBodyValidationSchema,
 };

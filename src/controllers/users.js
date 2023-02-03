@@ -3,12 +3,10 @@ const User = require('../models/user');
 const HttpError = require('../helpers/HttpError');
 const path = require('path');
 const fs = require('fs/promises');
-
+const jimp = require('jimp');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
-
-const avatarsDir = path.join(__dirname, '../', 'public', 'avatars');
 
 const {
   registerUserService,
@@ -43,17 +41,7 @@ const loginController = async (req, res) => {
       throw new Error('login-0100-error');
     }
 
-    const {
-      _id,
-      email: userEmail,
-      password: userPassword,
-      name,
-      address,
-      phone,
-      birthday,
-      avatarURL,
-      favoriteNotices,
-    } = user;
+    const { _id: userId, password: userPassword } = user;
 
     const isUsersPasswordMatch = await bcrypt.compare(
       requestPassword,
@@ -64,22 +52,11 @@ const loginController = async (req, res) => {
       throw new Error('login-0101-error');
     }
 
-    const token = jwt.sign({ _id }, process.env.JWT_SECRET);
+    const token = jwt.sign({ _id: userId }, process.env.JWT_SECRET);
 
-    await updateUserByIdService(_id, { token });
+    await updateUserByIdService(userId, { token });
 
-    const result = {
-      token,
-      user: {
-        email: userEmail,
-        name,
-        address,
-        phone,
-        birthday,
-        avatarURL,
-        favoriteNotices,
-      },
-    };
+    const result = { token, userId };
 
     res.json(result);
   } catch (error) {
@@ -97,25 +74,9 @@ const refreshController = async (req, res) => {
       throw new Error('refresh-no-user');
     }
 
-    const {
-      email,
-      name,
-      address,
-      phone,
-      birthday,
-      avatarURL,
-      favoriteNotices,
-    } = user;
+    const { _id: userId } = user;
 
-    const result = {
-      email,
-      name,
-      address,
-      phone,
-      birthday,
-      avatarURL,
-      favoriteNotices,
-    };
+    const result = { userId };
 
     res.json(result);
   } catch (error) {
@@ -141,23 +102,28 @@ const logoutController = async (req, res) => {
   }
 };
 
-const getCurrentController = async (req, res) => {
-  const { email, name, address, phone, birthday, avatarURL, favoriteNotices } =
-    req.user;
+const getCurrentUserInfoController = async (req, res) => {
+  const { email, name, address, phone, birthday, avatarURL } = req.user;
 
   const result = {
-    user: {
-      email,
-      name,
-      address,
-      phone,
-      birthday,
-      avatarURL,
-      favoriteNotices,
-    },
+    email,
+    name,
+    address,
+    phone,
+    birthday,
+    avatarURL,
   };
 
-  res.status(200).json(result);
+  res.json(result);
+};
+
+const updateCurrentUserInfoController = async (req, res) => {
+  const { _id } = req.user;
+  const body = req.body;
+
+  await updateUserByIdService(_id, body);
+
+  res.json({ code: 'user-info-update-success' });
 };
 
 const getOwnController = async (req, res, next) => {
@@ -272,36 +238,60 @@ const deleteFavoriteController = async (req, res, next) => {
 };
 
 const updateAvatarController = async (req, res) => {
-  const { path: tempUpload, originalname } = req.file;
-  const { _id } = req.user;
-  const imageName = `${_id}_${originalname}`;
+  const { _id, avatarURL: oldAvatarURL } = req.user;
+  const { path: tempAvatarPath, originalname } = req.file;
+
+  let oldAvatarURLPath = null;
+
+  if (oldAvatarURL) {
+    const [, oldAvatarExtension] = oldAvatarURL.split('.');
+
+    oldAvatarURLPath = path.resolve(
+      `./public/avatars/${_id}.${oldAvatarExtension}`
+    );
+  }
+
+  const avatarsPath = path.resolve('./public/avatars');
+
+  const [, extension] = originalname.split('.');
+
+  const avatarName = `${_id}.${extension}`;
+  const resultAvatarPath = `${avatarsPath}/${avatarName}`;
+
+  const avatarURL = `${process.env.HOST}/avatars/${avatarName}`;
+
   try {
-    const resultUpload = path.join(avatarsDir, imageName);
-    await fs.rename(tempUpload, resultUpload);
-    const avatarURl = path.join('public', 'avatars', imageName);
-    await User.findByIdAndUpdate(_id, { avatarURl }); // or create;
-    res.json({ avatarURl });
+    if (oldAvatarURLPath) await fs.unlink(oldAvatarURLPath);
+
+    const tempAvatar = await jimp.read(tempAvatarPath);
+
+    await tempAvatar.quality(80).writeAsync(resultAvatarPath);
+
+    await fs.unlink(tempAvatarPath);
+
+    await updateUserByIdService(_id, { avatarURL });
+
+    res.json({ code: 'avatar-update-success' });
   } catch (error) {
-    await fs.unlink(tempUpload);
-    throw error;
+    return res.status(500).json({ code: 'avatar-update-error' });
   }
 };
 
-const deleteAvatarsController = async (req, res, next) => {
+const deleteAvatarController = async (req, res) => {
+  const { _id, avatarURL } = req.user;
+
+  const [, extension] = avatarURL.split('.');
+
+  const avatarPath = path.resolve(`./public/avatars/${_id}.${extension}`);
+
   try {
-    const { _id } = req.user;
+    await fs.unlink(avatarPath);
 
-    const result = await User.findByIdAndUpdate(
-      { _id: _id },
-      { avatarURL: null }
-    );
+    await updateUserByIdService(_id, { avatarURL: null });
 
-    if (!result) {
-      throw HttpError(404, 'Not found');
-    }
     res.json({ avatarURL: null });
   } catch (error) {
-    next(error);
+    return res.status(500).json({ code: 'avatar-delete-error' });
   }
 };
 
@@ -310,11 +300,12 @@ module.exports = {
   loginController,
   refreshController,
   logoutController,
-  getCurrentController,
+  getCurrentUserInfoController,
+  updateCurrentUserInfoController,
   getOwnController,
   updateFavoriteController,
   getFavoriteController,
   deleteFavoriteController,
   updateAvatarController,
-  deleteAvatarsController,
+  deleteAvatarController,
 };
