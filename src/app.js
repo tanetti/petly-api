@@ -1,6 +1,7 @@
 const express = require('express');
 const logger = require('morgan');
 const cors = require('cors');
+const path = require('path');
 
 const app = express();
 
@@ -11,12 +12,14 @@ const noticesRouter = require('./routes/notices');
 
 const formatsLogger = app.get('env') === 'development' ? 'dev' : 'short';
 
+const staticPath = path.resolve('./public');
+
 app.use(logger(formatsLogger));
 app.use(cors());
 app.use(express.json());
-app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 
+app.use('/', express.static(staticPath));
 app.use('/api/users', usersRouter);
 app.use('/api/news', newsRouter);
 app.use('/api/services', servicesRouter);

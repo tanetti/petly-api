@@ -3,7 +3,7 @@ const fs = require('fs/promises');
 
 const pathToFile = path.resolve('./mock/services.json');
 
-const getServicesController = async (req, res, next) => {
+const getServicesController = async (req, res) => {
   try {
     const data = await fs.readFile(pathToFile);
 

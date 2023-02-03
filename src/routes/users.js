@@ -14,37 +14,45 @@ const {
   updateFavoriteController,
   getFavoriteController,
   deleteFavoriteController,
-  getCurrentController,
+  getCurrentUserInfoController,
+  updateCurrentUserInfoController,
   updateAvatarController,
-  deleteAvatarsController,
+  deleteAvatarController,
 } = require('../controllers/users');
 
-router.post('/register', userBodyValidation, registerController);
-router.post('/login', userBodyValidation, loginController);
 router.get('/refresh', authHeaderValidation, refreshController);
+router.post('/login', userBodyValidation, loginController);
+router.post('/register', userBodyValidation, registerController);
 router.post('/logout', authHeaderValidation, logoutController);
 
-router.get('/own', authHeaderValidation, getOwnController);
-router.get('/current', authHeaderValidation, getCurrentController);
+router.get('/current', authHeaderValidation, getCurrentUserInfoController);
+router.patch(
+  '/current',
+  authHeaderValidation,
+  userBodyValidation,
+  updateCurrentUserInfoController
+);
 
+router.get('/own', authHeaderValidation, getOwnController);
+
+router.get('/favorite', authHeaderValidation, getFavoriteController);
 router.patch(
   '/favorite/:noticeId',
   authHeaderValidation,
   updateFavoriteController
 );
-router.get('/favorite', authHeaderValidation, getFavoriteController);
 router.delete(
   '/favorite/:noticeId',
   authHeaderValidation,
   deleteFavoriteController
 );
 
-router.patch(
+router.post(
   '/avatars',
   authHeaderValidation,
   upload.single('avatar'),
   updateAvatarController
 );
-router.delete('/avatars', authHeaderValidation, deleteAvatarsController);
+router.delete('/avatars', authHeaderValidation, deleteAvatarController);
 
 module.exports = router;

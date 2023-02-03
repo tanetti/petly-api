@@ -1,6 +1,7 @@
 const {
   registerUserBodyValidationSchema,
   loginUserBodyValidationSchema,
+  updateUserBodyValidationSchema,
 } = require('./schema');
 
 const userBodyValidation = (req, res, next) => {
@@ -15,6 +16,10 @@ const userBodyValidation = (req, res, next) => {
 
   if (requestMethod === 'POST' && requestPath === '/login') {
     error = loginUserBodyValidationSchema.validate(req.body).error;
+  }
+
+  if (requestMethod === 'PATCH' && requestPath === '/current') {
+    error = updateUserBodyValidationSchema.validate(req.body).error;
   }
 
   if (error) {
