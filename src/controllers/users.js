@@ -1,6 +1,14 @@
+const Notice = require('../models/notices');
+const User = require('../models/user');
+const HttpError = require('../helpers/HttpError');
+const path = require('path');
+const fs = require('fs/promises');
+
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
+
+const avatarsDir = path.join(__dirname, '../', 'public', 'avatars');
 
 const {
   registerUserService,
@@ -133,9 +141,180 @@ const logoutController = async (req, res) => {
   }
 };
 
+const getCurrentController = async (req, res) => {
+  const { email, name, address, phone, birthday, avatarURL, favoriteNotices } =
+    req.user;
+
+  const result = {
+    user: {
+      email,
+      name,
+      address,
+      phone,
+      birthday,
+      avatarURL,
+      favoriteNotices,
+    },
+  };
+
+  res.status(200).json(result);
+};
+
+const getOwnController = async (req, res, next) => {
+  try {
+    const { _id } = req.user;
+    const { page = 1, limit = 200, search = '' } = req.query;
+
+    const skip = (page - 1) * limit;
+    const result = await Notice.find(
+      {
+        owner: _id,
+        title: { $regex: `${search}` },
+      },
+      '',
+      {
+        skip,
+        limit: Number(limit),
+      }
+    ).populate('owner', '_id');
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const updateFavoriteController = async (req, res, next) => {
+  try {
+    const { _id } = req.user;
+
+    const { noticeId } = req.params;
+
+    const { favoriteNotices } = await User.findOne({
+      _id: _id,
+    });
+
+    const newFavoriteNotices = !favoriteNotices.includes(noticeId)
+      ? [...favoriteNotices, noticeId]
+      : favoriteNotices;
+
+    const result = await User.findByIdAndUpdate(
+      { _id: _id },
+      { favoriteNotices: newFavoriteNotices }
+    );
+    if (!result) {
+      throw HttpError(404, 'Not found');
+    }
+    res.json(newFavoriteNotices);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getFavoriteController = async (req, res, next) => {
+  try {
+    const { page = 1, limit = 200, search = '' } = req.query;
+    const { _id } = req.user;
+
+    const { favoriteNotices } = await User.findOne({
+      _id: _id,
+    });
+
+    const skip = (page - 1) * limit;
+    const result = await Notice.find(
+      {
+        _id: favoriteNotices.map(noticeId => noticeId),
+        title: { $regex: `${search}` },
+      },
+      '',
+      {
+        skip,
+        limit: Number(limit),
+      }
+    ).populate('owner', '_id email');
+
+    if (!result) {
+      throw HttpError(404, 'Not found');
+    }
+
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const deleteFavoriteController = async (req, res, next) => {
+  try {
+    const { _id } = req.user;
+
+    const { noticeId } = req.params;
+
+    const { favoriteNotices } = await User.findOne({
+      _id: _id,
+    });
+
+    const deletedIdIndex = favoriteNotices.findIndex(
+      id => id === `${noticeId}`
+    );
+
+    favoriteNotices.splice(deletedIdIndex, 1);
+
+    const result = await User.findByIdAndUpdate(
+      { _id: _id },
+      { favoriteNotices: favoriteNotices }
+    );
+    if (!result) {
+      throw HttpError(404, 'Not found');
+    }
+    res.json(favoriteNotices);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const updateAvatarController = async (req, res) => {
+  const { path: tempUpload, originalname } = req.file;
+  const { _id } = req.user;
+  const imageName = `${_id}_${originalname}`;
+  try {
+    const resultUpload = path.join(avatarsDir, imageName);
+    await fs.rename(tempUpload, resultUpload);
+    const avatarURl = path.join('public', 'avatars', imageName);
+    await User.findByIdAndUpdate(_id, { avatarURl }); // or create;
+    res.json({ avatarURl });
+  } catch (error) {
+    await fs.unlink(tempUpload);
+    throw error;
+  }
+};
+
+const deleteAvatarsController = async (req, res, next) => {
+  try {
+    const { _id } = req.user;
+
+    const result = await User.findByIdAndUpdate(
+      { _id: _id },
+      { avatarURL: null }
+    );
+
+    if (!result) {
+      throw HttpError(404, 'Not found');
+    }
+    res.json({ avatarURL: null });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   registerController,
   loginController,
   refreshController,
   logoutController,
+  getCurrentController,
+  getOwnController,
+  updateFavoriteController,
+  getFavoriteController,
+  deleteFavoriteController,
+  updateAvatarController,
+  deleteAvatarsController,
 };
