@@ -10,15 +10,15 @@
         }
     },
     "consumes": ["application/json", "multipart/form-data"],
-    "produces": ["application/json"],
+    "produces": ["application/json", "multipart/form-data"],
     "servers": [{ "url": "http://localhost:3000" }],
     "tags": [
         {
-            "name": "Auth",
+            "name": "User",
             "description": "Authorization endpoints"
         },
         {
-            "name": "Services",
+            "name": "Friends",
             "description": "Partner contact information endpoints"
         },
         {
@@ -31,10 +31,10 @@
         }
     ],
     "paths": {
-        "/auth/register": {
+        "/register": {
             "post": {
-                "tags": ["Auth"],
-                "summary": "User registration",
+                "tags": ["User"],
+                "summary": "Реєстрація нового користувача",
                 "parameters": [],
                 "security": [{ "Bearer": [] }],
                 "requestBody": {
@@ -59,8 +59,8 @@
                             }
                         }
                     },
-                    "Error": {
-                        "description": "Error",
+                    "default": {
+                        "description": "Other responses",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -72,10 +72,10 @@
                 }
             }
         },
-        "/auth/login": {
+        "/login": {
             "post": {
-                "tags": ["Auth"],
-                "summary": "User login",
+                "tags": ["User"],
+                "summary": "Вхід в особистий кабінет",
                 "parameters": [],
                 "security": [{ "Bearer": [] }],
                 "requestBody": {
@@ -84,7 +84,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/RegistrationRequest"
+                                "$ref": "#/components/schemas/LoginRequest"
                             }
                         }
                     }
@@ -100,8 +100,8 @@
                             }
                         }
                     },
-                   "Error": {
-                        "description": "Error",
+                   "default": {
+                        "description": "Other responses",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -113,9 +113,111 @@
                 }
             }
         },
-        "/auth/edit": {
+        "/refresh": {
+            "get": {
+                "tags": ["User"],
+                "summary": "Отримання данних користувача при перезавантаженні сторінки",
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "header",
+                        "description": "Token to be passed as a header",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {   
+                        "name": "_id",
+                        "in": "path",
+                        "description": "Id of user",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "fdhrj524tr5j4rtjty54jt"
+                    }
+                ],
+                "security": [{ "Bearer": [] }],
+
+                "responses": {
+                    "201": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "Other responses",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/current": {
+            "post": {
+                "tags": ["User"],
+                "summary": "Отримання данних авторизованого користувача",
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "header",
+                        "description": "Token to be passed as a header",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {   
+                        "name": "_id",
+                        "in": "path",
+                        "description": "Id of user",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "fdhrj524tr5j4rtjty54jt"
+                    }
+                ],
+                "security": [{ "Bearer": [] }],
+                
+                "responses": {
+                    "201": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "Other responses",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/edit": {
             "patch": {
-                "tags": ["Auth"],
+                "tags": ["User"],
                 "summary": "User registration",
                 "parameters": [],
                 "security": [{ "Bearer": [] }],
@@ -152,20 +254,157 @@
                 }
             }
         },
-        "/auth/logout": {
+        "/logout": {
             "post": {
-                "tags": ["Auth"],
-                "summary": "User logout",
-                "parameters": [{
-                    "in": "path",
-                    "required": true,
-                    "type": "string"
-                }],
+                "tags": ["User"],
+                "summary": "Вихід з особистого кабінету",
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "header",
+                        "description": "Token to be passed as a header",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {   
+                        "name": "_id",
+                        "in": "path",
+                        "description": "Id of user",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "fdhrj524tr5j4rtjty54jt"
+                    }
+                ],
                 "security": [{ "Bearer": [] }],
-                "requestBody": {},
+
                 "responses": {
-                    "Error": {
-                        "description": "Error",
+                    "204": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "default": {
+                        "description": "Other responses",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/avatars": {
+            "patch": {
+                "tags": ["User"],
+                "summary": "Оновлення аватарки користувача",
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "header",
+                        "description": "Token to be passed as a header",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {   
+                        "name": "_id",
+                        "in": "path",
+                        "description": "Id of user",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "fdhrj524tr5j4rtjty54jt"
+                    }
+                ],
+                "security": [{ "Bearer": [] }],
+                "requestBody": {
+                    "description": "Image",
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AvatarsRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/avatarURlResponse"
+                                }
+                            }
+                        }
+                    },
+                   "default": {
+                        "description": "Other responses",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": ["User"],
+                "summary": "Видалення аватарки користувача",
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "header",
+                        "description": "Token to be passed as a header",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                            "type": "integer",
+                            "format": "int64"
+                            }
+                        },
+                        "style": "simple"
+                    },
+                    {   
+                        "name": "_id",
+                        "in": "path",
+                        "description": "Id of user",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "fdhrj524tr5j4rtjty54jt"
+                    }
+                ],
+                "security": [{ "Bearer": [] }],
+
+                "responses": {
+                    "201": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserDeletedAvatarResponse"
+                                }
+                            }
+                        }
+                    },
+                   "default": {
+                        "description": "Other responses",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -179,7 +418,7 @@
         },
         "/friends": {
             "get": {
-                "tags": ["Services"],
+                "tags": ["Friends"],
                 "summary": "Partner contact information",
                 "parameters": [],
                 "security": [{ "Bearer": [] }],
@@ -198,8 +437,8 @@
                             }   
                         }
                     },
-                    "Error": {
-                        "description": "Error",
+                    "default": {
+                        "description": "Other responses",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -232,8 +471,8 @@
                             }
                         }
                     },
-                    "Error": {
-                        "description": "Error",
+                    "default": {
+                        "description": "Other responses",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -245,7 +484,312 @@
                 }
             }
         },
-        "/notices/sell": {
+        "/": {
+            "get": {
+                "tags": ["Notices"],
+                "summary": "get all published notice ",
+                "parameters": [
+                    {   
+                        "name": "search",
+                        "in": "query",
+                        "description": "search query for a notice list",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "dog"
+                    },
+                    {   
+                        "name": "page",
+                        "in": "query",
+                        "description": "page number of a favorite list",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": "1"
+                    },
+                    {   
+                        "name": "limit",
+                        "in": "query",
+                        "description": "number of a favorite notices on a one page",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": "200" 
+                    }
+                ],
+                "security": [{ "Bearer": [] }],
+
+                "responses": {
+                    "201": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/NoticesItemResponse"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "Others responses",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": ["Notices"],
+                "summary": "Додає оголошення авторизованим користувачем",
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "header",
+                        "description": "Token to be passed as a header",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {   
+                        "name": "_id",
+                        "in": "path",
+                        "description": "Id of user",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "fdhrj524tr5j4rtjty54jt"
+                    }
+                ],
+                "security": [{ "Bearer": [] }],
+                
+                "requestBody": {
+                    "description": "new notice data",
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/NoticeAddRequest"
+                            }
+                        }
+                    }
+                },
+
+                "responses": {
+                    "201": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                               "schema": {
+                                    "$ref": "#/components/schemas/NoticesItemResponse"
+                                    
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "Other responses",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            } 
+        },
+        "/category/{categoryName}": {
+            "get": {
+                "tags": ["Notices"],
+                "summary": "отримує оголошення вибраної категорії з запитом пошуку або без нього",
+                "parameters": [
+                    {   
+                        "name": "search",
+                        "in": "query",
+                        "description": "search query for a notice list",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "dog"
+                    },
+                    {   
+                        "name": "categoryName",
+                        "in": "query",
+                        "description": "category name",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": ["sell", "lost-found", "for-free"]
+                        },
+                        "example": "sell"
+                    },
+                    {   
+                        "name": "page",
+                        "in": "query",
+                        "description": "page number of a favorite list",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": "1"
+                    },
+                    {   
+                        "name": "limit",
+                        "in": "query",
+                        "description": "number of a favorite notices on a one page",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": "200" 
+                    }
+                ],
+                "security": [{ "Bearer": [] }],
+
+                "responses": {
+                    "201": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/NoticesItemResponse"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "Others responses",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }  
+        },
+        "/{noticeId}": {
+            "get": {
+                "tags": ["Notices"],
+                "summary": "отримує оголошення по його ідентифікатору",
+                "parameters": [
+                    {   
+                        "name": "noticeId",
+                        "in": "path",
+                        "description": "Id of notice",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "yjtyj524tr5j4rtjt"
+                    }
+                ],
+                "security": [{ "Bearer": [] }],
+
+                "responses": {
+                    "201": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NoticesItemResponse"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "Others responses",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": ["Notices"],
+                "summary": "видалення оголошення по ідентифікатору",
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "header",
+                        "description": "Token to be passed as a header",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {   
+                        "name": "_id",
+                        "in": "path",
+                        "description": "Id of user",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "fdhrj524tr5j4rtjty54jt"
+                    },
+                    {   
+                        "name": "noticeId",
+                        "in": "path",
+                        "description": "Id of notice",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "yjtyj524tr5j4rtjt"
+                    }
+                ],
+                "security": [{ "Bearer": [] }],
+
+                "responses": {
+                    "201": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",       
+                                    "items": {
+                                        "$ref": "#/components/schemas/NoticesItemResponse"
+                                    }  
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "Others responses",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            } 
+        },
+        "/sell": {
             "get": {
                 "tags": ["Notices"],
                 "summary": "Sale advertisements",
@@ -266,8 +810,8 @@
                             }
                         }
                     },
-                    "Error": {
-                        "description": "Error",
+                    "default": {
+                        "description": "Others responses",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -279,7 +823,7 @@
                 }
             }
         },
-        "/notices/lost-found": {
+        "/lost-found": {
             "get": {
                 "tags": ["Notices"],
                 "summary": "Lost-found advertisements",
@@ -300,8 +844,8 @@
                             }
                         }
                     },
-                    "Error": {
-                        "description": "Error",
+                    "default": {
+                        "description": "Others responses",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -313,7 +857,7 @@
                 }
             }
         },
-        "/notices/for-free": {
+        "/for-free": {
             "get": {
                 "tags": ["Notices"],
                 "summary": "For-free advertisements",
@@ -334,8 +878,8 @@
                             }
                         }
                     },
-                    "Error": {
-                        "description": "Error",
+                    "default": {
+                        "description": "Others responses",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -347,10 +891,91 @@
                 }
             }
         },
-        "/notices/favorite": {
+        "/favorite": {
             "get": {
-                "tags": ["Notices"],
-                "summary": "Advertisements added to favorite",
+                "tags": ["User"],
+                "summary": "Отримує оголошення, додані до favorite, в данній категорії",
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "header",
+                        "description": "Token to be passed as a header",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {   
+                        "name": "_id",
+                        "in": "path",
+                        "description": "Id of user",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "fdhrj524tr5j4rtjty54jt"
+                    },
+                    {   
+                        "name": "search",
+                        "in": "query",
+                        "description": "search query for a favorite list",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "dog"
+                    },
+                    {   
+                        "name": "page",
+                        "in": "query",
+                        "description": "page number of a favorite list",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": "1"
+                    },
+                    {   
+                        "name": "limit",
+                        "in": "query",
+                        "description": "number of a favorite notices on a one page",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": "200" 
+                    }
+                ],
+                "security": [{ "Bearer": [] }],
+
+                "responses": {
+                    "201": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/NoticesItemResponse"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "Other responses",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "tags": ["User"],
+                "summary": "Оновлення статусу favorite в оголошенні",
                 "parameters": [
                     {
                         "name": "token",
@@ -377,13 +1002,14 @@
                         "example": "fdhrj524tr5j4rtjty54jt"
                     },
                     {   
-                        "name": "favorite",
+                        "name": "noticeId",
                         "in": "path",
-                        "description": "Favorite parameter",
+                        "description": "Id of notice",
                         "required": true,
                         "schema": {
-                            "type": "boolean"
-                        }
+                            "type": "string"
+                        },
+                        "example": "yjtyj524tr5j4rtjt"
                     }
                 ],
                 "security": [{ "Bearer": [] }],
@@ -393,7 +1019,7 @@
                         "description": "Successful operation",
                         "content": {
                             "application/json": {
-                                "schema": {
+                               "schema": {
                                     "type": "array",
                                     "items": {
                                         "$ref": "#/components/schemas/NoticesItemResponse"
@@ -402,8 +1028,8 @@
                             }
                         }
                     },
-                    "Error": {
-                        "description": "Error",
+                    "default": {
+                        "description": "Other responses",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -413,12 +1039,10 @@
                         }
                     }
                 }
-            }
-        },
-        "/notices/own": {
-            "get": {
-                "tags": ["Notices"],
-                "summary": "User advertisements list ",
+            },
+            "delete": {
+                "tags": ["User"],
+                "summary": "Видалення статусу favorite в оголошенні",
                 "parameters": [
                     {
                         "name": "token",
@@ -443,6 +1067,90 @@
                             "type": "string"
                         },
                         "example": "fdhrj524tr5j4rtjty54jt"
+                    },
+                    {   
+                        "name": "noticeId",
+                        "in": "path",
+                        "description": "Id of notice",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "yjtyj524tr5j4rtjt"
+                    }
+                ],
+                "security": [{ "Bearer": [] }],
+
+                "responses": {
+                    "201": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                               "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/NoticesItemResponse"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "Other responses",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/own": {
+            "get": {
+                "tags": ["User"],
+                "summary": "Оголошення, створені користувачем, в данній категорії",
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "header",
+                        "description": "Token to be passed as a header",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {   
+                        "name": "_id",
+                        "in": "path",
+                        "description": "Id of user",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "fdhrj524tr5j4rtjty54jt"
+                    },
+                    {   
+                        "name": "page",
+                        "in": "query",
+                        "description": "page number of a favorite list",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": "1"
+                    },
+                    {   
+                        "name": "limit",
+                        "in": "query",
+                        "description": "number of a favorite notices on a one page",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": "200" 
                     }
                 ],
                 "security": [{ "Bearer": [] }],
@@ -461,8 +1169,8 @@
                             }
                         }
                     },
-                    "Error": {
-                        "description": "Error",
+                    "default": {
+                        "description": "Other responses",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -483,6 +1191,38 @@
                 "properties": {
                     "email": {
                         "type": "string",
+                        "description": "User email",
+                        "format": "email",
+                        "example": "Anna12@gmail.com"
+                    },
+                    "password": {
+                        "type": "string",
+                        "description": "User password",
+                        "example": "qwerty123"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "User name",
+                        "example": "Anna"
+                    },
+                    "address": {
+                        "type": "string",
+                        "description": "User address",
+                        "example": "Kyiv"
+                    },
+                    "phone": {
+                        "type": "String",
+                        "description": "User phone number",
+                        "example": "+380998085001"
+                    }
+                }
+            },
+            "LoginRequest": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                    "email": {
+                        "type": "string",
                         "description": "User's email",
                         "format": "email"
                     },
@@ -490,6 +1230,71 @@
                         "type": "string",
                         "description": "User's password",
                         "example": "qwerty123"
+                    }
+                }
+            },
+            "AvatarsRequest": {
+                "type": "object",
+                "required": ["file"],
+                "properties": {
+                    "file": {
+                        "type": "string",
+                        "description": "Upload image for user's avatar",
+                        "format": "binary"
+                    }
+                }
+            },
+            "NoticeAddRequest": {
+                "type": "object",
+                "required": ["file", "title", "name", "birthdate", "location", "breed", "sex", "comments", "price", "category"],
+                "properties": {
+                    "title": {
+                      "type": "string",
+                      "description": "Sell advertisement title",
+                      "example": "Сute dog looking for a home"
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "Pet name",
+                      "example": "Rich"
+                    },
+                    "birthdate": {
+                      "type": "string",
+                      "description": "Birthdate of a pet",
+                      "example": "MM-DD-YYYY"
+                    },
+                    "location": {
+                      "type": "string",
+                      "description": "Birthdate of a pet"
+                    },
+                    "breed": {
+                      "type": "string",
+                      "description": "Location of a pet",
+                      "example": "Kyiv"
+                    },
+                    "sex": {
+                      "type": "string",
+                      "enum": ["male", "female"],
+                      "example": "female"
+                    },
+                    "comments": {
+                      "type": "string",
+                      "description": "description of a notice"
+                    },
+                    "price": {
+                      "type": "string",
+                      "description": "Sell advertisement price",
+                      "example": "50$"
+                    },
+                    "category": {
+                      "type": "string",
+                      "description": "Sell advertisement category",
+                      "example": "sell"
+                    },
+                    "file": {
+                        "type": "string",
+                        "description": "Notice image",
+                        "format": "binary"
                     }
                 }
             },
@@ -503,6 +1308,90 @@
                     }
                 }
             },
+            "FavoriteResponse": {
+                "type": "array",       
+                "items": {
+                    "$ref": "#/components/schemas/NoticesItemResponse"
+                }   
+            },
+            "User": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "description": "User email",
+                        "format": "email",
+                        "example": "Anna12@gmail.com"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "User name",
+                        "example": "Anna"
+                        },
+                    "address": {
+                        "type": "string",
+                        "description": "User address",
+                        "example": "Kyiv"
+                    },
+                    "phone": {
+                        "type": "number",
+                        "description": "User phone number",
+                        "example": "+380998085001"
+                    },
+                    "birthday": {
+                        "type": "number",
+                        "description": "User birthday",
+                        "example": "11.03.1998"
+                    },
+                    "avatarURL": {
+                        "type": "string",
+                        "description": "Url of user's avatar",
+                        "example": "https://storage.googleapis.com/kidslikev2_bucket/pets-support/images/sponsors/frame_287.png"
+                    },
+                    "favoriteNotices": {
+                        "type": "array",       
+                        "items": {
+                            "$ref": "#/components/schemas/NoticesItemResponse"
+                        }
+                    }
+                }
+            },
+            "UserDeletedAvatarResponse": {
+                "type": "object",
+                "properties": {
+                    "userEmail": {
+                        "type": "string",
+                        "description": "User email",
+                        "format": "email",
+                        "example": "Anna12@gmail.com"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "User name",
+                        "example": "Anna"
+                        },
+                    "address": {
+                        "type": "string",
+                        "description": "User address",
+                        "example": "Kyiv"
+                    },
+                    "phone": {
+                        "type": "number",
+                        "description": "User phone number",
+                        "example": "+380998085001"
+                    },
+                    "birthday": {
+                        "type": "number",
+                        "description": "User birthday",
+                        "example": "11.03.1998"
+                    },
+                    "avatarURL": {
+                        "type": "string",
+                        "description": "Empty url",
+                        "example": ""
+                    }
+                }
+            },
             "LoginResponse": {
                 "type": "object",
                 "properties": {
@@ -513,7 +1402,7 @@
                     "user": {
                         "type": "object",
                         "properties": {
-                            "userEmail": {
+                            "email": {
                                 "type": "string",
                                 "description": "User email",
                                 "format": "email",
@@ -530,12 +1419,12 @@
                                 "example": "Kyiv"
                             },
                             "phone": {
-                                "type": "number",
+                                "type": "string",
                                 "description": "User phone number",
                                 "example": "+380998085001"
                             },
                             "birthday": {
-                                "type": "number",
+                                "type": "Data",
                                 "description": "User birthday",
                                 "example": "11.03.1998"
                             },
@@ -545,13 +1434,23 @@
                                 "example": "https://storage.googleapis.com/kidslikev2_bucket/pets-support/images/sponsors/frame_287.png"
                             },
                             "favoriteNotices": {
-                                "type": "array",       
+                               "type": "array",       
                                 "items": {
                                     "$ref": "#/components/schemas/NoticesItemResponse"
-                                }   
+                                }
                             }
                         }
                     }   
+                }
+            },
+            "avatarURlResponse": {
+                "type": "object",
+                "properties": {
+                    "avatarURl": {
+                        "type": "string",
+                        "description": "User avatar",
+                        "example": "https://storage.googleapis.com/kidslikev2_bucket/pets-support/images/sponsors/frame_287.png"
+                    }
                 }
             },
             "FriendResponse": {
@@ -639,30 +1538,47 @@
             },
             "NoticesItemResponse": {
                 "type": "object",
+                "required": ["comments", "title", "price", "category", "petsAvatarURL"],
                 "properties": {
                     "title": {
                       "type": "string",
-                      "description": "Sell advertisement title",
+                      "description": "Notice  title",
                       "example": "Сute dog looking for a home"
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "Pet name",
+                      "example": "Rich"
+                    },
+                    "birthdate": {
+                      "type": "Date",
+                      "description": "Birthdate of a pet"
+                    },
+                    "location": {
+                      "type": "Date",
+                      "description": "Birthdate of a pet"
                     },
                     "breed": {
                       "type": "string",
-                      "description": "Breed of a pet",
-                      "example": "Pomeranian"
+                      "description": "Location of a pet",
+                      "example": "Kyiv"
                     },
-                    "imageUrl": {
+                    "sex": {
+                      "type": "string",
+                      "example": "female"
+                    },
+                    "comments": {
+                      "type": "string",
+                      "description": "description of a notice"
+                    },
+                    "petsAvatarURL": {
                       "type": "string",
                       "description": "Sell advertisement avatar",
                       "example": "https://storage.googleapis.com/kidslikev2_bucket/pets-support/images/sponsors/frame_287.png"
                     },
-                    "age": {
-                      "type": "string",
-                      "description": "Age of a pet",
-                      "example": "one year"
-                    },
                     "price": {
-                      "type": "string",
-                      "description": "Sell advertisement price",
+                      "type": "Number",
+                      "description": "Notice  price",
                       "example": "50$"
                     },
                     "favorite": {
@@ -671,8 +1587,24 @@
                     },
                     "category": {
                       "type": "string",
-                      "description": "Sell advertisement category",
-                      "example": "sell"
+                      "description": "Notice category"
+                    },
+                    "owner": {
+                        "type": "object",
+                        "required": ["email", "password"],
+                        "properties": {
+                            "email": {
+                                "type": "string",
+                                "description": "User email",
+                                "format": "email",
+                                "example": "Anna12@gmail.com"
+                            },
+                            "password": {
+                                "type": "string",
+                                "description": "User password",
+                                "example": "qwerty123"
+                            }
+                        }
                     }
                 }
             },
@@ -682,11 +1614,11 @@
                     "code": {
                         "type": "integer",
                         "format": "int32",
-                        "example": "404"
+                        "example": "400"
                     },
                     "message": {
                         "type": "string",
-                        "example": "Not found"
+                        "example": "Bad request"
                     }
                 }    
             }
