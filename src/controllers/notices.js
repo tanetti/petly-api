@@ -47,6 +47,7 @@ const getById = async (req, res, next) => {
   try {
     const { noticeId } = req.params;
 
+    console.log(noticeId);
     const result = await Notice.findOne({
       _id: noticeId,
     });
