@@ -1,4 +1,4 @@
-const { HttpError } = require('../../helpers/HttpError');
+const HttpError = require('../../helpers/HttpError');
 
 const validation = schema => {
   return (req, res, next) => {

@@ -12,10 +12,9 @@ const addSchema = Joi.object({
     .max(120)
     .required(),
   price: Joi.number().min(1),
-  // favorite: Joi.boolean(),
   category: Joi.string().valid('sell', 'lost-found', 'for-free').required(),
   sex: Joi.string().valid('male', 'female'),
-  petsAvatarURL: Joi.string().required(),
+  petsAvatarURL: Joi.string(),
 });
 
 module.exports = {
