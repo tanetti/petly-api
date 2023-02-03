@@ -41,7 +41,7 @@ const noticesSchema = new Schema({
   },
   petsAvatarURL: {
     type: String,
-    required: [true, 'Set petsAvatarURL for notices'],
+    required: [true, 'Set avatar for notices'],
   },
 
   owner: {
