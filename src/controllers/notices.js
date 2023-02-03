@@ -65,24 +65,24 @@ const avatarsDir = path.join(__dirname, '../', 'public', 'avatars');
 const addNotice = async (req, res, next) => {
   const { _id: id } = req.user;
 
-  if (!req.file) {
-    const imageName = 'petly.png';
+  // if (!req.file) {
+  //   const imageName = 'petly.png';
 
-    try {
-      const resultUpload = path.join(avatarsDir, imageName);
-      await fs.rename(resultUpload, resultUpload);
-      const petsAvatarURL = path.join('public', 'avatars', imageName);
-      const result = await Notice.create({
-        ...req.body,
-        petsAvatarURL,
-        owner: id,
-      });
-      res.json(result);
-    } catch (error) {
-      next(error);
-    }
-    return;
-  }
+  //   try {
+  //     const resultUpload = path.join(avatarsDir, imageName);
+  //     await fs.rename(resultUpload, resultUpload);
+  //     const petsAvatarURL = path.join('public', 'avatars', imageName);
+  //     const result = await Notice.create({
+  //       ...req.body,
+  //       petsAvatarURL,
+  //       owner: id,
+  //     });
+  //     res.json(result);
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  //   return;
+  // }
 
   const { path: tempUpload, originalname } = req.file;
   const imageName = `${id}_${originalname}`;

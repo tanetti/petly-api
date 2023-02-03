@@ -14,7 +14,7 @@ const addSchema = Joi.object({
   price: Joi.number().min(1),
   category: Joi.string().valid('sell', 'lost-found', 'for-free').required(),
   sex: Joi.string().valid('male', 'female'),
-  petsAvatarURL: Joi.string(),
+  petsAvatarURL: Joi.string().required(),
 });
 
 module.exports = {
