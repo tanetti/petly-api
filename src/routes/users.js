@@ -3,7 +3,7 @@ const router = new express.Router();
 
 const userBodyValidation = require('../middlewares/userBodyValidation/validation');
 const authHeaderValidation = require('../middlewares/authHeaderValidation');
-const upload = require('../middlewares/notices');
+const upload = require('../middlewares/notices/upload');
 
 const {
   registerController,

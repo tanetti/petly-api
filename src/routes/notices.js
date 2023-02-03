@@ -2,11 +2,10 @@ const express = require('express');
 const schema = require('../schemas/notices');
 const authHeaderValidation = require('../middlewares/authHeaderValidation');
 
-const {
-  noticeIdValidation,
-  validation,
-  upload,
-} = require('../middlewares/notices');
+const noticeIdValidation = require('../middlewares/notices/noticeIdValidation');
+const validation = require('../middlewares/notices/validation');
+const upload = require('../middlewares/notices/upload');
+
 const {
   getAll,
   getCategory,
