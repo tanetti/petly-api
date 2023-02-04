@@ -43,23 +43,24 @@ const loginUserBodyValidationSchema = joi.object({
 const updateUserBodyValidationSchema = joi.object({
   email: joi.string().email().messages({
     'string.base': 'user-update-email-format-error',
+    'string.empty': 'user-update-empty-error',
     'string.email': 'user-update-email-format-error',
     'any.required': 'user-update-email-required-error',
   }),
 
-  birthday: joi.string().messages({
+  birthday: joi.string().allow('', null).messages({
     'string.base': 'user-update-birthday-format-error',
   }),
 
-  name: joi.string().messages({
+  name: joi.string().allow('', null).messages({
     'string.base': 'user-update-name-format-error',
   }),
 
-  address: joi.string().messages({
+  address: joi.string().allow('', null).messages({
     'string.base': 'user-update-address-format-error',
   }),
 
-  phone: joi.string().messages({
+  phone: joi.string().allow('', null).messages({
     'string.base': 'user-update-phone-format-error',
   }),
 });

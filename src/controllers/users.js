@@ -121,9 +121,17 @@ const updateCurrentUserInfoController = async (req, res) => {
   const { _id } = req.user;
   const body = req.body;
 
-  await updateUserByIdService(_id, body);
+  try {
+    await updateUserByIdService(_id, body);
 
-  res.json({ code: 'user-info-update-success' });
+    res.json({ code: 'user-update-success' });
+  } catch (error) {
+    if (error.code === 11000) {
+      return res.status(409).json({ code: 'user-update-email-0102-error' });
+    }
+
+    return res.status(400).json({ code: error.message });
+  }
 };
 
 const getOwnController = async (req, res, next) => {
@@ -243,7 +251,7 @@ const updateAvatarController = async (req, res) => {
 
   const avatarsPath = path.resolve('./public/avatars');
 
-  const [, extension] = originalname.split('.');
+  const [extension] = originalname.split('.').reverse();
 
   const avatarName = `${_id}.${extension}`;
   const resultAvatarPath = `${avatarsPath}/${avatarName}`;
@@ -253,7 +261,17 @@ const updateAvatarController = async (req, res) => {
   try {
     const tempAvatar = await jimp.read(tempAvatarPath);
 
-    await tempAvatar.quality(80).writeAsync(resultAvatarPath);
+    const width = tempAvatar.getWidth();
+    const height = tempAvatar.getHeight();
+    const isHorizontal = width > height;
+    const ratio = isHorizontal ? width / height : height / width;
+    const newWidth = isHorizontal ? 500 * ratio : 500;
+    const newHeight = isHorizontal ? 500 : 500 * ratio;
+
+    await tempAvatar
+      .resize(newWidth, newHeight)
+      .quality(80)
+      .writeAsync(resultAvatarPath);
 
     await fs.unlink(tempAvatarPath);
 
@@ -268,7 +286,7 @@ const updateAvatarController = async (req, res) => {
 const deleteAvatarController = async (req, res) => {
   const { _id, avatarURL } = req.user;
 
-  const [, extension] = avatarURL.split('.');
+  const [extension] = avatarURL.split('.').reverse();
 
   const avatarPath = path.resolve(`./public/avatars/${_id}.${extension}`);
 
@@ -277,7 +295,7 @@ const deleteAvatarController = async (req, res) => {
 
     await updateUserByIdService(_id, { avatarURL: null });
 
-    res.json({ avatarURL: null });
+    res.json({ code: 'avatar-delete-success' });
   } catch (error) {
     return res.status(500).json({ code: 'avatar-delete-error' });
   }
