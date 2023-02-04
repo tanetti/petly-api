@@ -33,4 +33,10 @@ app.use((err, req, res, next) => {
   res.status(500).json({ code: 'api-error', message: err.message });
 });
 
+
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('../swagger.json');
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 module.exports = app;
