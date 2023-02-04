@@ -238,18 +238,8 @@ const deleteFavoriteController = async (req, res, next) => {
 };
 
 const updateAvatarController = async (req, res) => {
-  const { _id, avatarURL: oldAvatarURL } = req.user;
+  const { _id } = req.user;
   const { path: tempAvatarPath, originalname } = req.file;
-
-  let oldAvatarURLPath = null;
-
-  if (oldAvatarURL) {
-    const [, oldAvatarExtension] = oldAvatarURL.split('.');
-
-    oldAvatarURLPath = path.resolve(
-      `./public/avatars/${_id}.${oldAvatarExtension}`
-    );
-  }
 
   const avatarsPath = path.resolve('./public/avatars');
 
@@ -261,8 +251,6 @@ const updateAvatarController = async (req, res) => {
   const avatarURL = `${process.env.HOST}/avatars/${avatarName}`;
 
   try {
-    if (oldAvatarURLPath) await fs.unlink(oldAvatarURLPath);
-
     const tempAvatar = await jimp.read(tempAvatarPath);
 
     await tempAvatar.quality(80).writeAsync(resultAvatarPath);
