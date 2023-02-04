@@ -134,29 +134,6 @@ const updateCurrentUserInfoController = async (req, res) => {
   }
 };
 
-const getOwnController = async (req, res, next) => {
-  try {
-    const { _id } = req.user;
-    const { page = 1, limit = 200, search = '' } = req.query;
-
-    const skip = (page - 1) * limit;
-    const result = await Notice.find(
-      {
-        owner: _id,
-        title: { $regex: `${search}` },
-      },
-      '',
-      {
-        skip,
-        limit: Number(limit),
-      }
-    ).populate('owner', '_id');
-    res.json(result);
-  } catch (error) {
-    next(error);
-  }
-};
-
 const updateFavoriteController = async (req, res, next) => {
   try {
     const { _id } = req.user;
@@ -308,7 +285,6 @@ module.exports = {
   logoutController,
   getCurrentUserInfoController,
   updateCurrentUserInfoController,
-  getOwnController,
   updateFavoriteController,
   getFavoriteController,
   deleteFavoriteController,

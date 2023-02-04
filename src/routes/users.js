@@ -1,16 +1,16 @@
 const express = require('express');
 const router = new express.Router();
 
-const userBodyValidation = require('../middlewares/userBodyValidation/validation');
 const authHeaderValidation = require('../middlewares/authHeaderValidation');
 const upload = require('../middlewares/notices/upload');
+const userBodyValidation = require('../middlewares/userBodyValidation/validation');
+const ownBodyValidation = require('../middlewares/ownBodyValidation/validation');
 
 const {
   registerController,
   loginController,
   refreshController,
   logoutController,
-  getOwnController,
   updateFavoriteController,
   getFavoriteController,
   deleteFavoriteController,
@@ -19,6 +19,12 @@ const {
   updateAvatarController,
   deleteAvatarController,
 } = require('../controllers/users');
+
+const {
+  getOwnController,
+  addOwnController,
+  deleteOwnByIdController,
+} = require('../controllers/own');
 
 router.get('/refresh', authHeaderValidation, refreshController);
 router.post('/login', userBodyValidation, loginController);
@@ -34,6 +40,14 @@ router.patch(
 );
 
 router.get('/own', authHeaderValidation, getOwnController);
+router.post(
+  '/own',
+  authHeaderValidation,
+  upload.single('pet_avatar'),
+  ownBodyValidation,
+  addOwnController
+);
+router.delete('/own/:ownId', authHeaderValidation, deleteOwnByIdController);
 
 router.get('/favorite', authHeaderValidation, getFavoriteController);
 router.patch(
