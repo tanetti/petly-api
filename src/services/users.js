@@ -24,9 +24,27 @@ const updateUserByIdService = async (_id, body) => {
   await User.findByIdAndUpdate(_id, body);
 };
 
+const addUserFavoriteByIdService = async (_id, favoriteId) => {
+  await User.findByIdAndUpdate(_id, {
+    $push: {
+      favoriteNotices: favoriteId,
+    },
+  });
+};
+
+const deleteUserFavoriteByIdService = async (_id, favoriteId) => {
+  await User.findByIdAndUpdate(_id, {
+    $pull: {
+      favoriteNotices: favoriteId,
+    },
+  });
+};
+
 module.exports = {
   registerUserService,
   findUserByObjectOfParameters,
   findUserByIdService,
   updateUserByIdService,
+  addUserFavoriteByIdService,
+  deleteUserFavoriteByIdService,
 };

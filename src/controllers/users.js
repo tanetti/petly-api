@@ -1,6 +1,3 @@
-const Notice = require('../models/notices');
-const User = require('../models/user');
-const HttpError = require('../helpers/HttpError');
 const path = require('path');
 const fs = require('fs/promises');
 const jimp = require('jimp');
@@ -13,6 +10,8 @@ const {
   findUserByObjectOfParameters,
   findUserByIdService,
   updateUserByIdService,
+  addUserFavoriteByIdService,
+  deleteUserFavoriteByIdService,
 } = require('../services/users');
 
 const registerController = async (req, res) => {
@@ -134,91 +133,49 @@ const updateCurrentUserInfoController = async (req, res) => {
   }
 };
 
-const updateFavoriteController = async (req, res, next) => {
+const getFavoriteController = async (req, res) => {
+  const { _id } = req.user;
+
   try {
-    const { _id } = req.user;
+    const { favoriteNotices } = await findUserByIdService(_id);
 
-    const { noticeId } = req.params;
-
-    const { favoriteNotices } = await User.findOne({
-      _id: _id,
-    });
-
-    const newFavoriteNotices = !favoriteNotices.includes(noticeId)
-      ? [...favoriteNotices, noticeId]
-      : favoriteNotices;
-
-    const result = await User.findByIdAndUpdate(
-      { _id: _id },
-      { favoriteNotices: newFavoriteNotices }
-    );
-    if (!result) {
-      throw HttpError(404, 'Not found');
-    }
-    res.json(newFavoriteNotices);
+    res.json(favoriteNotices);
   } catch (error) {
-    next(error);
+    return res.status(400).json({ code: error.message });
   }
 };
 
-const getFavoriteController = async (req, res, next) => {
+const updateFavoriteController = async (req, res) => {
+  const { _id } = req.user;
+  const { noticeId } = req.params;
+
   try {
-    const { page = 1, limit = 200, search = '' } = req.query;
-    const { _id } = req.user;
-
-    const { favoriteNotices } = await User.findOne({
-      _id: _id,
-    });
-
-    const skip = (page - 1) * limit;
-    const result = await Notice.find(
-      {
-        _id: favoriteNotices.map(noticeId => noticeId),
-        title: { $regex: `${search}` },
-      },
-      '',
-      {
-        skip,
-        limit: Number(limit),
-      }
-    ).populate('owner', '_id email');
-
-    if (!result) {
-      throw HttpError(404, 'Not found');
+    if (!noticeId) {
+      throw new Error('favorite-no-id-error');
     }
 
-    res.json(result);
+    await addUserFavoriteByIdService(_id, noticeId);
+
+    res.json({ code: 'favorite-update-success' });
   } catch (error) {
-    next(error);
+    return res.status(400).json({ code: error.message });
   }
 };
 
 const deleteFavoriteController = async (req, res, next) => {
+  const { _id } = req.user;
+  const { noticeId } = req.params;
+
   try {
-    const { _id } = req.user;
-
-    const { noticeId } = req.params;
-
-    const { favoriteNotices } = await User.findOne({
-      _id: _id,
-    });
-
-    const deletedIdIndex = favoriteNotices.findIndex(
-      id => id === `${noticeId}`
-    );
-
-    favoriteNotices.splice(deletedIdIndex, 1);
-
-    const result = await User.findByIdAndUpdate(
-      { _id: _id },
-      { favoriteNotices: favoriteNotices }
-    );
-    if (!result) {
-      throw HttpError(404, 'Not found');
+    if (!noticeId) {
+      throw new Error('favorite-no-id-error');
     }
-    res.json(favoriteNotices);
+
+    await deleteUserFavoriteByIdService(_id, noticeId);
+
+    res.json('favorite-delete-success-error');
   } catch (error) {
-    next(error);
+    return res.status(400).json({ code: error.message });
   }
 };
 
