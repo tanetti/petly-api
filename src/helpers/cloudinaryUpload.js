@@ -6,18 +6,18 @@ cloudinary.config({
   api_secret: 'PXT433_ddDbzBoK3AHmtmgc9WC8',
 });
 
-const uploadCloudinary = (imgPath, imgName) => {
-  cloudinary.uploader.upload(imgPath, {
+const uploadCloudinary = async (imgPath, imgName) => {
+  const res = await cloudinary.uploader.upload(imgPath, {
     public_id: `${imgName}`,
   });
 
-  const url = cloudinary.url(`${imgName}`, {
-    width: 100,
-    height: 150,
-    Crop: 'fill',
-  });
+  const url = res.secure_url;
 
   return url;
 };
 
-module.exports = uploadCloudinary;
+const deleteCloudinary = async imgName => {
+  await cloudinary.api.delete_resources_by_prefix(imgName);
+};
+
+module.exports = { uploadCloudinary, deleteCloudinary };

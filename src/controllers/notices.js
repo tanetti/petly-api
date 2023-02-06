@@ -2,7 +2,7 @@ const Notice = require('../models/notices');
 const HttpError = require('../helpers/HttpError');
 const fs = require('fs/promises');
 
-const uploadCloudinary = require('../helpers/cloudinaryUpload');
+const { uploadCloudinary } = require('../helpers/cloudinaryUpload');
 
 const getAll = async (req, res, next) => {
   try {

@@ -1,9 +1,11 @@
-const path = require('path');
 const fs = require('fs/promises');
-const jimp = require('jimp');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
+const {
+  uploadCloudinary,
+  deleteCloudinary,
+} = require('../helpers/cloudinaryUpload');
 
 const {
   registerUserService,
@@ -13,6 +15,8 @@ const {
   addUserFavoriteByIdService,
   deleteUserFavoriteByIdService,
 } = require('../services/users');
+
+const getAvatarName = require('../helpers/getAvatarName');
 
 const registerController = async (req, res) => {
   try {
@@ -182,30 +186,9 @@ const deleteFavoriteController = async (req, res, next) => {
 const updateAvatarController = async (req, res) => {
   const { _id } = req.user;
   const { path: tempAvatarPath, originalname } = req.file;
-
-  const avatarsPath = path.resolve('./public/avatars');
-
-  const [extension] = originalname.split('.').reverse();
-
-  const avatarName = `${_id}.${extension}`;
-  const resultAvatarPath = `${avatarsPath}/${avatarName}`;
-
-  const avatarURL = `${process.env.HOST}/avatars/${avatarName}`;
-
+  const avatarName = `${_id}.${originalname}`;
   try {
-    const tempAvatar = await jimp.read(tempAvatarPath);
-
-    const width = tempAvatar.getWidth();
-    const height = tempAvatar.getHeight();
-    const isHorizontal = width > height;
-    const ratio = isHorizontal ? width / height : height / width;
-    const newWidth = isHorizontal ? 500 * ratio : 500;
-    const newHeight = isHorizontal ? 500 : 500 * ratio;
-
-    await tempAvatar
-      .resize(newWidth, newHeight)
-      .quality(80)
-      .writeAsync(resultAvatarPath);
+    const avatarURL = await uploadCloudinary(tempAvatarPath, avatarName);
 
     await fs.unlink(tempAvatarPath);
 
@@ -218,14 +201,14 @@ const updateAvatarController = async (req, res) => {
 };
 
 const deleteAvatarController = async (req, res) => {
-  const { _id, avatarURL } = req.user;
-
-  const [extension] = avatarURL.split('.').reverse();
-
-  const avatarPath = path.resolve(`./public/avatars/${_id}.${extension}`);
+  const { _id } = req.user;
 
   try {
-    await fs.unlink(avatarPath);
+    const { avatarURL } = await findUserByIdService(_id);
+
+    const avatarName = await getAvatarName(avatarURL);
+
+    await deleteCloudinary(avatarName);
 
     await updateUserByIdService(_id, { avatarURL: null });
 
