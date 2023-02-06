@@ -61,7 +61,6 @@ const addOwnController = async (req, res) => {
 
 const deleteOwnByIdController = async (req, res) => {
   const { _id } = req.user;
-
   const { ownId } = req.params;
 
   try {

@@ -2,7 +2,12 @@ const Notice = require('../models/notices');
 const HttpError = require('../helpers/HttpError');
 const fs = require('fs/promises');
 
-const { uploadCloudinary } = require('../helpers/cloudinaryUpload');
+const {
+  uploadCloudinary,
+  deleteCloudinary,
+} = require('../helpers/cloudinaryUpload');
+
+const getAvatarName = require('../helpers/getAvatarName');
 
 const getAll = async (req, res, next) => {
   try {
@@ -83,18 +88,26 @@ const addNotice = async (req, res, next) => {
 };
 
 const deleteNotice = async (req, res, next) => {
+  const { noticeId } = req.params;
+  const { _id } = req.user;
   try {
-    const { noticeId } = req.params;
-    const { _id } = req.user;
+    const { petsAvatarURL } = await await Notice.findById(_id);
+    const avatartUrl = petsAvatarURL;
+    const avatarName = await getAvatarName(avatartUrl);
 
     const result = await Notice.findByIdAndRemove({
       _id: noticeId,
       owner: _id,
     });
 
-    if (result === null) {
+    if (!result) {
       throw HttpError(404, 'Not found');
     }
+
+    if (result) {
+      await deleteCloudinary(avatarName);
+    }
+
     res.json(result);
   } catch (error) {
     next(error);
