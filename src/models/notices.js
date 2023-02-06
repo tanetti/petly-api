@@ -23,13 +23,9 @@ const noticesSchema = new Schema({
   },
   price: {
     type: Number,
-    required: [true, 'Set price for notices'],
+    // required: [true, 'Set price for notices'],
     default: 0,
   },
-  // favorite: {
-  //   type: Boolean,
-  //   default: false,
-  // },
   category: {
     type: String,
     enum: ['sell', 'lost-found', 'for-free'],
