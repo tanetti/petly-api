@@ -1,9 +1,14 @@
-const path = require('path');
 const fs = require('fs/promises');
-const jimp = require('jimp');
 require('dotenv').config();
 
-const avatarsPath = path.resolve('./public/own_avatars');
+const {
+  uploadCloudinary,
+  deleteCloudinary,
+} = require('../helpers/cloudinaryUpload');
+
+const getAvatarName = require('../helpers/getAvatarName');
+
+const { findUserByIdService } = require('../services/users');
 
 const {
   addOwnService,
@@ -37,30 +42,12 @@ const getOwnController = async (req, res) => {
 const addOwnController = async (req, res) => {
   const { _id } = req.user;
   const { path: tempAvatarPath, originalname } = req.file;
-
-  const [extension] = originalname.split('.').reverse();
+  const imageName = `${_id}_${originalname}`;
 
   try {
     const { _id: ownId } = await addOwnService({ ...req.body, owner: _id });
 
-    const avatarName = `${ownId}.${extension}`;
-    const resultAvatarPath = `${avatarsPath}/${avatarName}`;
-
-    const avatarURL = `${process.env.HOST}/own_avatars/${avatarName}`;
-
-    const tempAvatar = await jimp.read(tempAvatarPath);
-
-    const width = tempAvatar.getWidth();
-    const height = tempAvatar.getHeight();
-    const isHorizontal = width > height;
-    const ratio = isHorizontal ? width / height : height / width;
-    const newWidth = isHorizontal ? 500 * ratio : 500;
-    const newHeight = isHorizontal ? 500 : 500 * ratio;
-
-    await tempAvatar
-      .resize(newWidth, newHeight)
-      .quality(80)
-      .writeAsync(resultAvatarPath);
+    const avatarURL = uploadCloudinary(tempAvatarPath, imageName);
 
     await fs.unlink(tempAvatarPath);
 
@@ -73,23 +60,22 @@ const addOwnController = async (req, res) => {
 };
 
 const deleteOwnByIdController = async (req, res) => {
+  const { _id } = req.user;
+
   const { ownId } = req.params;
 
   try {
+    const { avatarURL } = await findUserByIdService(_id);
+    const avatartUrl = avatarURL;
+    const avatarName = await getAvatarName(avatartUrl);
+
     const result = await deleteOwnByIdService(ownId);
 
     if (!result) {
       return res.status(404).json({ code: 'own-delete-not-found-error' });
     }
-
-    if (result.avatarURL) {
-      const [extension] = result.avatarURL.split('.').reverse();
-
-      const avatarPath = path.resolve(
-        `./public/own_avatars/${ownId}.${extension}`
-      );
-
-      await fs.unlink(avatarPath);
+    if (result) {
+      await deleteCloudinary(avatarName);
     }
 
     res.json({ code: 'own-delete-success' });
