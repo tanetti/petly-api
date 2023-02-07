@@ -3,47 +3,44 @@ const { Schema, model, SchemaTypes } = require('mongoose');
 const noticesSchema = new Schema({
   title: {
     type: String,
-    required: [true, 'Set title for notices'],
+    required: [true, 'Provide title for notice'],
   },
   name: {
     type: String,
+    required: [true, 'Provide name of pet'],
   },
   birthdate: {
     type: Date,
+    required: [true, 'Provide pet birthday'],
   },
   breed: {
     type: String,
+    required: [true, 'Provide pet breed'],
   },
   location: {
     type: String,
+    required: [true, 'Provide pet breed'],
   },
   comments: {
     type: String,
-    required: [true, 'Set comments for notices'],
   },
   price: {
     type: Number,
-    required: [true, 'Set price for notices'],
     default: 0,
   },
-  // favorite: {
-  //   type: Boolean,
-  //   default: false,
-  // },
   category: {
     type: String,
     enum: ['sell', 'lost-found', 'for-free'],
-    required: [true, 'Set category for notices'],
+    required: [true, 'Provide category for notice'],
   },
   sex: {
     type: String,
     enum: ['male', 'female'],
+    required: [true, 'Provide sex of pet'],
   },
-  petsAvatarURL: {
+  avatarURL: {
     type: String,
-    required: [true, 'Set avatar for notices'],
   },
-
   owner: {
     type: SchemaTypes.ObjectId,
     ref: 'users',

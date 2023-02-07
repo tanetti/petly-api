@@ -1,7 +1,13 @@
 const Notice = require('../models/notices');
 const HttpError = require('../helpers/HttpError');
+const jimp = require('jimp');
 const path = require('path');
 const fs = require('fs/promises');
+
+const {
+  addNoticeService,
+  updateNoticeByIdService,
+} = require('../services/notices');
 
 const getAll = async (req, res, next) => {
   try {
@@ -60,45 +66,45 @@ const getById = async (req, res, next) => {
   }
 };
 
-const avatarsDir = path.join(__dirname, '../', 'public', 'avatars');
+const addNoticeController = async (req, res) => {
+  const { _id } = req.user;
+  const { path: tempAvatarPath, originalname } = req.file;
+  const avatarsPath = path.resolve('./public/notice_avatars');
 
-const addNotice = async (req, res, next) => {
-  const { _id: id } = req.user;
-
-  // if (!req.file) {
-  //   const imageName = 'petly.png';
-
-  //   try {
-  //     const resultUpload = path.join(avatarsDir, imageName);
-  //     await fs.rename(resultUpload, resultUpload);
-  //     const petsAvatarURL = path.join('public', 'avatars', imageName);
-  //     const result = await Notice.create({
-  //       ...req.body,
-  //       petsAvatarURL,
-  //       owner: id,
-  //     });
-  //     res.json(result);
-  //   } catch (error) {
-  //     next(error);
-  //   }
-  //   return;
-  // }
-
-  const { path: tempUpload, originalname } = req.file;
-  const imageName = `${id}_${originalname}`;
+  const [extension] = originalname.split('.').reverse();
 
   try {
-    const resultUpload = path.join(avatarsDir, imageName);
-    await fs.rename(tempUpload, resultUpload);
-    const petsAvatarURL = path.join('public', 'avatars', imageName);
-    const result = await Notice.create({
+    const { _id: noticeId } = await addNoticeService({
       ...req.body,
-      petsAvatarURL,
-      owner: id,
+      owner: _id,
     });
-    res.status(201).json(result);
+
+    const avatarName = `${noticeId}.${extension}`;
+    const resultAvatarPath = `${avatarsPath}/${avatarName}`;
+
+    const avatarURL = `${process.env.HOST}/notice_avatars/${avatarName}`;
+
+    const tempAvatar = await jimp.read(tempAvatarPath);
+
+    const width = tempAvatar.getWidth();
+    const height = tempAvatar.getHeight();
+    const isHorizontal = width > height;
+    const ratio = isHorizontal ? width / height : height / width;
+    const newWidth = isHorizontal ? 500 * ratio : 500;
+    const newHeight = isHorizontal ? 500 : 500 * ratio;
+
+    await tempAvatar
+      .resize(newWidth, newHeight)
+      .quality(80)
+      .writeAsync(resultAvatarPath);
+
+    await fs.unlink(tempAvatarPath);
+
+    await updateNoticeByIdService(noticeId, { avatarURL });
+
+    res.json({ code: 'notice-add-success' });
   } catch (error) {
-    next(error);
+    return res.status(500).json({ code: error.message });
   }
 };
 
@@ -125,6 +131,6 @@ module.exports = {
   getAll,
   getCategory,
   getById,
-  addNotice,
+  addNoticeController,
   deleteNotice,
 };

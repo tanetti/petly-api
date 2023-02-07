@@ -3,8 +3,6 @@ const fs = require('fs/promises');
 const jimp = require('jimp');
 require('dotenv').config();
 
-const avatarsPath = path.resolve('./public/own_avatars');
-
 const {
   addOwnService,
   updateOwnByIdService,
@@ -37,6 +35,7 @@ const getOwnController = async (req, res) => {
 const addOwnController = async (req, res) => {
   const { _id } = req.user;
   const { path: tempAvatarPath, originalname } = req.file;
+  const avatarsPath = path.resolve('./public/own_avatars');
 
   const [extension] = originalname.split('.').reverse();
 

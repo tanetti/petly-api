@@ -1,4 +1,5 @@
 const express = require('express');
+const router = new express.Router();
 const schema = require('../schemas/notices');
 const authHeaderValidation = require('../middlewares/authHeaderValidation');
 
@@ -10,11 +11,9 @@ const {
   getAll,
   getCategory,
   getById,
-  addNotice,
+  addNoticeController,
   deleteNotice,
 } = require('../controllers/notices');
-
-const router = express.Router();
 
 router.get('/', getAll);
 router.get('/category/:categoryName', getCategory);
@@ -22,9 +21,9 @@ router.get('/:noticeId', noticeIdValidation, getById);
 router.post(
   '/',
   authHeaderValidation,
+  upload.single('notice_avatar'),
   validation(schema.addSchema),
-  upload.single('avatar'),
-  addNotice
+  addNoticeController
 );
 router.delete(
   '/:noticeId',
