@@ -1,51 +1,71 @@
-const Notice = require('../models/notices');
+const Notice = require('../models/notice');
 const HttpError = require('../helpers/HttpError');
 const jimp = require('jimp');
 const path = require('path');
 const fs = require('fs/promises');
 
 const {
+  findSortedByDateCategoryNoticesService,
+  findSortedByDateUserOwnNoticesService,
+  findSortedByDateUserFavotiteNoticesService,
   addNoticeService,
   updateNoticeByIdService,
 } = require('../services/notices');
 
-const getAll = async (req, res, next) => {
+const getNoticeCategoryController = async (req, res) => {
+  const { categoryName } = req.params;
+  const { search = '' } = req.query;
+
   try {
-    const { page = 1, limit = 200, search = '' } = req.query;
+    const result = await findSortedByDateCategoryNoticesService(
+      categoryName,
+      search
+    );
 
-    const skip = (page - 1) * limit;
-    const result = await Notice.find({ title: { $regex: `${search}` } }, '', {
-      skip,
-      limit: Number(limit),
-    }).populate('owner', '_id email phone');
-    res.json(result);
-  } catch (error) {
-    next(error);
-  }
-};
-
-const getCategory = async (req, res, next) => {
-  try {
-    const { categoryName } = req.params;
-
-    const { page = 1, limit = 200, search = '' } = req.query;
-
-    const skip = (page - 1) * limit;
-    const result = await Notice.find(
-      { category: categoryName, title: { $regex: `${search}` } },
-      '',
-      {
-        skip,
-        limit: Number(limit),
-      }
-    ).populate('owner', '_id email phone');
     if (!result) {
-      throw HttpError(404, 'Not found');
+      throw new Error('notices-get-error');
     }
 
     res.json(result);
   } catch (error) {
-    next(error);
+    return res.status(500).json({ code: error.message });
+  }
+};
+
+const getUserOwnNoticesController = async (req, res) => {
+  const { _id } = req.user;
+  const { search = '' } = req.query;
+
+  try {
+    const result = await findSortedByDateUserOwnNoticesService(_id, search);
+
+    if (!result) {
+      throw new Error('notices-get-error');
+    }
+
+    res.json(result);
+  } catch (error) {
+    return res.status(500).json({ code: error.message });
+  }
+};
+
+const getUserFavoriteNoticesController = async (req, res) => {
+  const { favoriteNotices } = req.user;
+  const { search = '' } = req.query;
+
+  try {
+    const result = await findSortedByDateUserFavotiteNoticesService(
+      favoriteNotices,
+      search
+    );
+
+    if (!result) {
+      throw new Error('notices-get-error');
+    }
+
+    res.json(result);
+  } catch (error) {
+    return res.status(500).json({ code: error.message });
   }
 };
 
@@ -128,8 +148,9 @@ const deleteNotice = async (req, res, next) => {
 };
 
 module.exports = {
-  getAll,
-  getCategory,
+  getNoticeCategoryController,
+  getUserOwnNoticesController,
+  getUserFavoriteNoticesController,
   getById,
   addNoticeController,
   deleteNotice,

@@ -1,9 +1,11 @@
 const express = require('express');
 const router = new express.Router();
 
+const upload = require('../middlewares/upload');
 const authHeaderValidation = require('../middlewares/authHeaderValidation');
-const upload = require('../middlewares/notices/upload');
 const userBodyValidation = require('../middlewares/userBodyValidation/validation');
+const ownIdParameterValidation = require('../middlewares/idRequestParameterValidation/ownIdParameterValidation');
+const noticeIdParameterValidation = require('../middlewares/idRequestParameterValidation/noticeIdParameterValidation');
 const ownBodyValidation = require('../middlewares/ownBodyValidation/validation');
 
 const {
@@ -47,7 +49,12 @@ router.post(
   ownBodyValidation,
   addOwnController
 );
-router.delete('/own/:ownId', authHeaderValidation, deleteOwnByIdController);
+router.delete(
+  '/own/:ownId',
+  authHeaderValidation,
+  ownIdParameterValidation,
+  deleteOwnByIdController
+);
 
 router.get('/favorite', authHeaderValidation, getFavoriteController);
 router.patch(
@@ -58,6 +65,7 @@ router.patch(
 router.delete(
   '/favorite/:noticeId',
   authHeaderValidation,
+  noticeIdParameterValidation,
   deleteFavoriteController
 );
 

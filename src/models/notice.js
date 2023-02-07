@@ -1,6 +1,7 @@
 const { Schema, model, SchemaTypes } = require('mongoose');
+const PUBLIC_CATEGORIES = require('../constants/publicCategories');
 
-const noticesSchema = new Schema({
+const noticeSchema = new Schema({
   title: {
     type: String,
     required: [true, 'Provide title for notice'],
@@ -30,7 +31,7 @@ const noticesSchema = new Schema({
   },
   category: {
     type: String,
-    enum: ['sell', 'lost-found', 'for-free'],
+    enum: [...PUBLIC_CATEGORIES],
     required: [true, 'Provide category for notice'],
   },
   sex: {
@@ -45,8 +46,9 @@ const noticesSchema = new Schema({
     type: SchemaTypes.ObjectId,
     ref: 'users',
   },
+  created_at: { type: Date, required: true, default: Date.now },
 });
 
-const Notice = model('notice', noticesSchema);
+const Notice = model('notice', noticeSchema);
 
 module.exports = Notice;

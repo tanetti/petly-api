@@ -1,6 +1,7 @@
 const path = require('path');
 const fs = require('fs/promises');
 const sortByDate = require('../utilities/sortByDate');
+const filterData = require('../utilities/filterResult');
 
 const pathToFile = path.resolve('./mock/news.json');
 
@@ -12,19 +13,7 @@ const getNewsController = async (req, res) => {
 
     const rawData = JSON.parse(data);
 
-    let filteredData = null;
-
-    if (search) {
-      const normalizedSearchValue = search.toLowerCase();
-
-      filteredData = rawData.filter(
-        ({ title, description }) =>
-          title.toLowerCase().includes(normalizedSearchValue) ||
-          description.toLowerCase().includes(normalizedSearchValue)
-      );
-    } else {
-      filteredData = rawData;
-    }
+    const filteredData = filterData(rawData, search, ['title', 'description']);
 
     const result = sortByDate(filteredData);
 

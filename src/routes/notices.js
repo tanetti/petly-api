@@ -1,34 +1,40 @@
 const express = require('express');
 const router = new express.Router();
-const schema = require('../schemas/notices');
 const authHeaderValidation = require('../middlewares/authHeaderValidation');
 
-const noticeIdValidation = require('../middlewares/notices/noticeIdValidation');
-const validation = require('../middlewares/notices/validation');
-const upload = require('../middlewares/notices/upload');
+const upload = require('../middlewares/upload');
+const noticeIdParameterValidation = require('../middlewares/idRequestParameterValidation/noticeIdParameterValidation');
+const noticeCategoryParameterValidation = require('../middlewares/noticeCategoryParameterValidation/validation');
+const noticeBodyValidation = require('../middlewares/noticeBodyValidation/validation');
 
 const {
-  getAll,
-  getCategory,
+  getNoticeCategoryController,
+  getUserOwnNoticesController,
+  getUserFavoriteNoticesController,
   getById,
   addNoticeController,
   deleteNotice,
 } = require('../controllers/notices');
 
-router.get('/', getAll);
-router.get('/category/:categoryName', getCategory);
-router.get('/:noticeId', noticeIdValidation, getById);
+router.get('/own', authHeaderValidation, getUserOwnNoticesController);
+router.get('/favorite', authHeaderValidation, getUserFavoriteNoticesController);
+router.get(
+  '/category/:categoryName',
+  noticeCategoryParameterValidation,
+  getNoticeCategoryController
+);
+router.get('/:noticeId', noticeIdParameterValidation, getById);
 router.post(
   '/',
   authHeaderValidation,
   upload.single('notice_avatar'),
-  validation(schema.addSchema),
+  noticeBodyValidation,
   addNoticeController
 );
 router.delete(
   '/:noticeId',
   authHeaderValidation,
-  noticeIdValidation,
+  noticeIdParameterValidation,
   deleteNotice
 );
 
