@@ -88,7 +88,9 @@ const updateNoticeByIdService = async (_id, body) => {
 };
 
 const deleteNoticeByParametersService = async parameters => {
-  await Notice.findOneAndDelete(parameters);
+  const result = await Notice.findOneAndDelete(parameters);
+
+  return result;
 };
 
 module.exports = {

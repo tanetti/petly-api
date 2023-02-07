@@ -132,7 +132,20 @@ const deleteNoticeByIdAndOwnerController = async (req, res) => {
   const { _id: owner } = req.user;
 
   try {
-    await deleteNoticeByParametersService({ _id: noticeId, owner });
+    const result = await deleteNoticeByParametersService({
+      _id: noticeId,
+      owner,
+    });
+
+    if (result.avatarURL) {
+      const [extension] = result.avatarURL.split('.').reverse();
+
+      const avatarPath = path.resolve(
+        `./public/notice_avatars/${noticeId}.${extension}`
+      );
+
+      await fs.unlink(avatarPath);
+    }
 
     res.json({ code: 'notice-delete-success' });
   } catch (error) {
