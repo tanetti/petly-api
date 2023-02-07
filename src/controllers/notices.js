@@ -1,5 +1,3 @@
-const Notice = require('../models/notice');
-const HttpError = require('../helpers/HttpError');
 const jimp = require('jimp');
 const path = require('path');
 const fs = require('fs/promises');
@@ -10,6 +8,8 @@ const {
   findSortedByDateUserFavotiteNoticesService,
   addNoticeService,
   updateNoticeByIdService,
+  deleteNoticeByParametersService,
+  getNoticeByIdService,
 } = require('../services/notices');
 
 const getNoticeCategoryController = async (req, res) => {
@@ -69,20 +69,19 @@ const getUserFavoriteNoticesController = async (req, res) => {
   }
 };
 
-const getById = async (req, res, next) => {
-  try {
-    const { noticeId } = req.params;
+const getNoticeById = async (req, res) => {
+  const { noticeId } = req.params;
 
-    console.log(noticeId);
-    const result = await Notice.findOne({
-      _id: noticeId,
-    }).populate('owner', '_id email phone');
+  try {
+    const result = await getNoticeByIdService(noticeId);
+
     if (!result) {
-      throw HttpError(404, 'Not found');
+      throw new Error('notice-get-error');
     }
+
     res.json(result);
   } catch (error) {
-    next(error);
+    return res.status(500).json({ code: error.message });
   }
 };
 
@@ -128,22 +127,16 @@ const addNoticeController = async (req, res) => {
   }
 };
 
-const deleteNotice = async (req, res, next) => {
+const deleteNoticeByIdAndOwnerController = async (req, res) => {
+  const { noticeId } = req.params;
+  const { _id: owner } = req.user;
+
   try {
-    const { noticeId } = req.params;
-    const { _id } = req.user;
+    await deleteNoticeByParametersService({ _id: noticeId, owner });
 
-    const result = await Notice.findByIdAndRemove({
-      _id: noticeId,
-      owner: _id,
-    });
-
-    if (result === null) {
-      throw HttpError(404, 'Not found');
-    }
-    res.json(result);
+    res.json({ code: 'notice-delete-success' });
   } catch (error) {
-    next(error);
+    return res.status(500).json({ code: error.message });
   }
 };
 
@@ -151,7 +144,7 @@ module.exports = {
   getNoticeCategoryController,
   getUserOwnNoticesController,
   getUserFavoriteNoticesController,
-  getById,
+  getNoticeById,
   addNoticeController,
-  deleteNotice,
+  deleteNoticeByIdAndOwnerController,
 };

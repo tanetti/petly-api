@@ -11,9 +11,9 @@ const {
   getNoticeCategoryController,
   getUserOwnNoticesController,
   getUserFavoriteNoticesController,
-  getById,
+  getNoticeById,
   addNoticeController,
-  deleteNotice,
+  deleteNoticeByIdAndOwnerController,
 } = require('../controllers/notices');
 
 router.get('/own', authHeaderValidation, getUserOwnNoticesController);
@@ -23,7 +23,7 @@ router.get(
   noticeCategoryParameterValidation,
   getNoticeCategoryController
 );
-router.get('/:noticeId', noticeIdParameterValidation, getById);
+router.get('/:noticeId', noticeIdParameterValidation, getNoticeById);
 router.post(
   '/',
   authHeaderValidation,
@@ -35,7 +35,7 @@ router.delete(
   '/:noticeId',
   authHeaderValidation,
   noticeIdParameterValidation,
-  deleteNotice
+  deleteNoticeByIdAndOwnerController
 );
 
 module.exports = router;

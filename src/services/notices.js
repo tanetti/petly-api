@@ -66,6 +66,15 @@ const findSortedByDateUserFavotiteNoticesService = async (
   return result;
 };
 
+const getNoticeByIdService = async _id => {
+  const result = await Notice.findById(_id).populate(
+    'owner',
+    '_id email phone'
+  );
+
+  return result;
+};
+
 const addNoticeService = async data => {
   const notice = new Notice(data);
 
@@ -78,10 +87,16 @@ const updateNoticeByIdService = async (_id, body) => {
   await Notice.findByIdAndUpdate(_id, body);
 };
 
+const deleteNoticeByParametersService = async parameters => {
+  await Notice.findOneAndDelete(parameters);
+};
+
 module.exports = {
   findSortedByDateCategoryNoticesService,
   findSortedByDateUserOwnNoticesService,
   findSortedByDateUserFavotiteNoticesService,
+  getNoticeByIdService,
   addNoticeService,
   updateNoticeByIdService,
+  deleteNoticeByParametersService,
 };
