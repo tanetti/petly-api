@@ -2,6 +2,8 @@ const express = require('express');
 const logger = require('morgan');
 const cors = require('cors');
 const path = require('path');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('../swagger.json');
 
 const app = express();
 
@@ -24,6 +26,7 @@ app.use('/api/users', usersRouter);
 app.use('/api/news', newsRouter);
 app.use('/api/services', servicesRouter);
 app.use('/api/notices', noticesRouter);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use((req, res) => {
   res.status(404).json({ code: 'not-found', message: "Path wasn't found" });
@@ -34,9 +37,8 @@ app.use((err, req, res, next) => {
 });
 
 
-const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('../swagger.json');
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+
 
 module.exports = app;
