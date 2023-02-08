@@ -7,13 +7,15 @@ const multerConfig = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, tempDir);
   },
+
   filename: (req, file, cb) => {
     const { _id } = req.user;
     const currentUserId = _id.toString();
     const [, extension] = file.originalname.split('.');
 
-    cb(null, `${currentUserId}.${extension}`);
+    cb(null, `${currentUserId}.${extension}@raw`);
   },
+
   limits: {
     fileSize: 1048576,
   },

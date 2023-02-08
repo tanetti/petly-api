@@ -1,6 +1,4 @@
-const path = require('path');
 const fs = require('fs/promises');
-const jimp = require('jimp');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
@@ -13,6 +11,11 @@ const {
   addUserFavoriteByIdService,
   deleteUserFavoriteByIdService,
 } = require('../services/users');
+
+const {
+  uploadUserAvatarService,
+  destroyAvatarByUrlService,
+} = require('../services/cloudinary');
 
 const registerController = async (req, res) => {
   try {
@@ -180,36 +183,17 @@ const deleteFavoriteController = async (req, res, next) => {
 };
 
 const updateAvatarController = async (req, res) => {
-  const { _id } = req.user;
-  const { path: tempAvatarPath, originalname } = req.file;
-
-  const avatarsPath = path.resolve('./public/avatars');
-
-  const [extension] = originalname.split('.').reverse();
-
-  const avatarName = `${_id}.${extension}`;
-  const resultAvatarPath = `${avatarsPath}/${avatarName}`;
-
-  const avatarURL = `${process.env.HOST}/avatars/${avatarName}`;
+  const { _id, avatarURL: oldAvatarUrl } = req.user;
+  const { compressedImagePath } = req;
 
   try {
-    const tempAvatar = await jimp.read(tempAvatarPath);
+    if (oldAvatarUrl) await destroyAvatarByUrlService(oldAvatarUrl);
 
-    const width = tempAvatar.getWidth();
-    const height = tempAvatar.getHeight();
-    const isHorizontal = width > height;
-    const ratio = isHorizontal ? width / height : height / width;
-    const newWidth = isHorizontal ? 500 * ratio : 500;
-    const newHeight = isHorizontal ? 500 : 500 * ratio;
+    const { url } = await uploadUserAvatarService(compressedImagePath);
 
-    await tempAvatar
-      .resize(newWidth, newHeight)
-      .quality(80)
-      .writeAsync(resultAvatarPath);
+    await fs.unlink(compressedImagePath);
 
-    await fs.unlink(tempAvatarPath);
-
-    await updateUserByIdService(_id, { avatarURL });
+    await updateUserByIdService(_id, { avatarURL: url });
 
     res.json({ code: 'avatar-update-success' });
   } catch (error) {
@@ -220,12 +204,8 @@ const updateAvatarController = async (req, res) => {
 const deleteAvatarController = async (req, res) => {
   const { _id, avatarURL } = req.user;
 
-  const [extension] = avatarURL.split('.').reverse();
-
-  const avatarPath = path.resolve(`./public/avatars/${_id}.${extension}`);
-
   try {
-    await fs.unlink(avatarPath);
+    await destroyAvatarByUrlService(avatarURL);
 
     await updateUserByIdService(_id, { avatarURL: null });
 

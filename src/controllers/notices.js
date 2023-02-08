@@ -1,6 +1,11 @@
-const jimp = require('jimp');
-const path = require('path');
 const fs = require('fs/promises');
+
+const createNewImagePath = require('../utilities/createNewImagePath');
+
+const {
+  uploadNoticeAvatarService,
+  destroyAvatarByUrlService,
+} = require('../services/cloudinary');
 
 const {
   findSortedByDateCategoryNoticesService,
@@ -87,10 +92,7 @@ const getNoticeById = async (req, res) => {
 
 const addNoticeController = async (req, res) => {
   const { _id } = req.user;
-  const { path: tempAvatarPath, originalname } = req.file;
-  const avatarsPath = path.resolve('./public/notice_avatars');
-
-  const [extension] = originalname.split('.').reverse();
+  const { compressedImagePath } = req;
 
   try {
     const { _id: noticeId } = await addNoticeService({
@@ -98,28 +100,15 @@ const addNoticeController = async (req, res) => {
       owner: _id,
     });
 
-    const avatarName = `${noticeId}.${extension}`;
-    const resultAvatarPath = `${avatarsPath}/${avatarName}`;
+    const newImagePath = createNewImagePath(compressedImagePath, noticeId);
 
-    const avatarURL = `${process.env.HOST}/notice_avatars/${avatarName}`;
+    await fs.rename(compressedImagePath, newImagePath);
 
-    const tempAvatar = await jimp.read(tempAvatarPath);
+    const { url } = await uploadNoticeAvatarService(newImagePath);
 
-    const width = tempAvatar.getWidth();
-    const height = tempAvatar.getHeight();
-    const isHorizontal = width > height;
-    const ratio = isHorizontal ? width / height : height / width;
-    const newWidth = isHorizontal ? 500 * ratio : 500;
-    const newHeight = isHorizontal ? 500 : 500 * ratio;
+    await fs.unlink(newImagePath);
 
-    await tempAvatar
-      .resize(newWidth, newHeight)
-      .quality(80)
-      .writeAsync(resultAvatarPath);
-
-    await fs.unlink(tempAvatarPath);
-
-    await updateNoticeByIdService(noticeId, { avatarURL });
+    await updateNoticeByIdService(noticeId, { avatarURL: url });
 
     res.json({ code: 'notice-add-success' });
   } catch (error) {
@@ -132,20 +121,18 @@ const deleteNoticeByIdAndOwnerController = async (req, res) => {
   const { _id: owner } = req.user;
 
   try {
-    const result = await deleteNoticeByParametersService({
+    const currentNotice = await getNoticeByIdService(noticeId);
+
+    if (!currentNotice) {
+      return res.status(404).json({ code: 'notice-delete-not-found-error' });
+    }
+
+    await destroyAvatarByUrlService(currentNotice.avatarURL);
+
+    await deleteNoticeByParametersService({
       _id: noticeId,
       owner,
     });
-
-    if (result.avatarURL) {
-      const [extension] = result.avatarURL.split('.').reverse();
-
-      const avatarPath = path.resolve(
-        `./public/notice_avatars/${noticeId}.${extension}`
-      );
-
-      await fs.unlink(avatarPath);
-    }
 
     res.json({ code: 'notice-delete-success' });
   } catch (error) {

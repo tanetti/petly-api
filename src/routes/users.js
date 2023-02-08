@@ -1,7 +1,8 @@
 const express = require('express');
 const router = new express.Router();
 
-const upload = require('../middlewares/upload');
+const upload = require('../middlewares/uploadImage');
+const compressImage = require('../middlewares/compressImage');
 const authHeaderValidation = require('../middlewares/authHeaderValidation');
 const userBodyValidation = require('../middlewares/userBodyValidation/validation');
 const ownIdParameterValidation = require('../middlewares/idRequestParameterValidation/ownIdParameterValidation');
@@ -46,6 +47,7 @@ router.post(
   '/own',
   authHeaderValidation,
   upload.single('pet_avatar'),
+  compressImage,
   ownBodyValidation,
   addOwnController
 );
@@ -73,6 +75,7 @@ router.post(
   '/avatars',
   authHeaderValidation,
   upload.single('avatar'),
+  compressImage,
   updateAvatarController
 );
 router.delete('/avatars', authHeaderValidation, deleteAvatarController);

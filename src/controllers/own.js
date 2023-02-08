@@ -1,11 +1,17 @@
-const path = require('path');
 const fs = require('fs/promises');
-const jimp = require('jimp');
 require('dotenv').config();
+
+const createNewImagePath = require('../utilities/createNewImagePath');
+
+const {
+  uploadOwnAvatarService,
+  destroyAvatarByUrlService,
+} = require('../services/cloudinary');
 
 const {
   addOwnService,
   updateOwnByIdService,
+  findOwnById,
   findOwnByOwner,
   deleteOwnByIdService,
 } = require('../services/own');
@@ -14,19 +20,9 @@ const getOwnController = async (req, res) => {
   const { _id } = req.user;
 
   try {
-    const result = await findOwnByOwner({ _id });
+    const result = await findOwnByOwner(_id);
 
-    let finalResult = null;
-
-    if (result.length) {
-      const sortedResult = result.sort((a, b) => b.created_at - a.created_at);
-
-      finalResult = sortedResult;
-    } else {
-      finalResult = result;
-    }
-
-    res.json(finalResult);
+    res.json(result);
   } catch (error) {
     return res.status(500).json({ code: error.message });
   }
@@ -34,36 +30,20 @@ const getOwnController = async (req, res) => {
 
 const addOwnController = async (req, res) => {
   const { _id } = req.user;
-  const { path: tempAvatarPath, originalname } = req.file;
-  const avatarsPath = path.resolve('./public/own_avatars');
-
-  const [extension] = originalname.split('.').reverse();
+  const { compressedImagePath } = req;
 
   try {
     const { _id: ownId } = await addOwnService({ ...req.body, owner: _id });
 
-    const avatarName = `${ownId}.${extension}`;
-    const resultAvatarPath = `${avatarsPath}/${avatarName}`;
+    const newImagePath = createNewImagePath(compressedImagePath, ownId);
 
-    const avatarURL = `${process.env.HOST}/own_avatars/${avatarName}`;
+    await fs.rename(compressedImagePath, newImagePath);
 
-    const tempAvatar = await jimp.read(tempAvatarPath);
+    const { url } = await uploadOwnAvatarService(newImagePath);
 
-    const width = tempAvatar.getWidth();
-    const height = tempAvatar.getHeight();
-    const isHorizontal = width > height;
-    const ratio = isHorizontal ? width / height : height / width;
-    const newWidth = isHorizontal ? 500 * ratio : 500;
-    const newHeight = isHorizontal ? 500 : 500 * ratio;
+    await fs.unlink(newImagePath);
 
-    await tempAvatar
-      .resize(newWidth, newHeight)
-      .quality(80)
-      .writeAsync(resultAvatarPath);
-
-    await fs.unlink(tempAvatarPath);
-
-    await updateOwnByIdService(ownId, { avatarURL });
+    await updateOwnByIdService(ownId, { avatarURL: url });
 
     res.json({ code: 'own-add-success' });
   } catch (error) {
@@ -75,21 +55,15 @@ const deleteOwnByIdController = async (req, res) => {
   const { ownId } = req.params;
 
   try {
-    const result = await deleteOwnByIdService(ownId);
+    const currentOwn = await findOwnById(ownId);
 
-    if (!result) {
+    if (!currentOwn) {
       return res.status(404).json({ code: 'own-delete-not-found-error' });
     }
 
-    if (result.avatarURL) {
-      const [extension] = result.avatarURL.split('.').reverse();
+    await destroyAvatarByUrlService(currentOwn.avatarURL);
 
-      const avatarPath = path.resolve(
-        `./public/own_avatars/${ownId}.${extension}`
-      );
-
-      await fs.unlink(avatarPath);
-    }
+    await deleteOwnByIdService(ownId);
 
     res.json({ code: 'own-delete-success' });
   } catch (error) {

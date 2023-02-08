@@ -12,8 +12,16 @@ const updateOwnByIdService = async (_id, body) => {
   await Own.findByIdAndUpdate(_id, body);
 };
 
+const findOwnById = async _id => {
+  const result = await Own.findById(_id);
+
+  return result;
+};
+
 const findOwnByOwner = async owner => {
-  const result = await Own.find({ owner }).select('-__v -owner');
+  const result = await Own.find({ owner })
+    .sort({ created_at: 'desc' })
+    .select('-__v -owner');
 
   return result;
 };
@@ -27,6 +35,7 @@ const deleteOwnByIdService = async _id => {
 module.exports = {
   addOwnService,
   updateOwnByIdService,
+  findOwnById,
   findOwnByOwner,
   deleteOwnByIdService,
 };
