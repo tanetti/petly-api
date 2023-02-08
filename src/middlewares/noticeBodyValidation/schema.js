@@ -33,9 +33,8 @@ const noticeBodyValidationSchema = Joi.object({
     'any.required': 'notice-location-required-error',
   }),
 
-  comments: Joi.string().min(8).max(500).messages({
+  comments: Joi.string().max(500).messages({
     'string.base': 'notice-comments-format-error',
-    'string.min': 'notice-comments-length-error',
     'string.max': 'notice-comments-length-error',
   }),
 
