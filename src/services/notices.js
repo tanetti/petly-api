@@ -5,7 +5,8 @@ const findSortedByDateCategoryNoticesService = async (category, search) => {
 
   if (!search) {
     result = await Notice.find(category === 'all' ? null : { category })
-      .populate('owner', '_id email phone')
+      .select('-__v -sex -comments -created_at')
+      .populate('owner', '_id')
       .sort({ created_at: 'desc' });
   } else {
     result = await Notice.find(category === 'all' ? null : { category })
@@ -14,7 +15,8 @@ const findSortedByDateCategoryNoticesService = async (category, search) => {
         { breed: { $regex: search, $options: 'i' } },
         { location: { $regex: search, $options: 'i' } },
       ])
-      .populate('owner', '_id email phone')
+      .select('-__v -sex -comments -created_at')
+      .populate('owner', '_id')
       .sort({ created_at: 'desc' });
   }
 
@@ -26,7 +28,8 @@ const findSortedByDateUserOwnNoticesService = async (owner, search) => {
 
   if (!search) {
     result = await Notice.find({ owner })
-      .populate('owner', '_id email phone')
+      .select('-__v -sex -comments -created_at')
+      .populate('owner', '_id')
       .sort({ created_at: 'desc' });
   } else {
     result = await Notice.find({ owner })
@@ -35,7 +38,8 @@ const findSortedByDateUserOwnNoticesService = async (owner, search) => {
         { breed: { $regex: search, $options: 'i' } },
         { location: { $regex: search, $options: 'i' } },
       ])
-      .populate('owner', '_id email phone')
+      .select('-__v -sex -comments -created_at')
+      .populate('owner', '_id')
       .sort({ created_at: 'desc' });
   }
 
@@ -50,7 +54,8 @@ const findSortedByDateUserFavotiteNoticesService = async (
 
   if (!search) {
     result = await Notice.find({ _id: { $in: userFavoriteNotices } })
-      .populate('owner', '_id email phone')
+      .select('-__v -sex -comments -created_at')
+      .populate('owner', '_id')
       .sort({ created_at: 'desc' });
   } else {
     result = await Notice.find({ _id: { $in: userFavoriteNotices } })
@@ -59,7 +64,8 @@ const findSortedByDateUserFavotiteNoticesService = async (
         { breed: { $regex: search, $options: 'i' } },
         { location: { $regex: search, $options: 'i' } },
       ])
-      .populate('owner', '_id email phone')
+      .select('-__v -sex -comments -created_at')
+      .populate('owner', '_id')
       .sort({ created_at: 'desc' });
   }
 
@@ -67,10 +73,9 @@ const findSortedByDateUserFavotiteNoticesService = async (
 };
 
 const getNoticeByIdService = async _id => {
-  const result = await Notice.findById(_id).populate(
-    'owner',
-    '_id email phone'
-  );
+  const result = await Notice.findById(_id)
+    .select('-__v -created_at')
+    .populate('owner', '_id email phone');
 
   return result;
 };

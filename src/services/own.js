@@ -21,7 +21,7 @@ const findOwnById = async _id => {
 const findOwnByOwner = async owner => {
   const result = await Own.find({ owner })
     .sort({ created_at: 'desc' })
-    .select('-__v -owner');
+    .select('-__v -owner -created_at');
 
   return result;
 };
