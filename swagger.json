@@ -1,1437 +1,1444 @@
 {
-    "openapi": "3.0.1",
-    "info": {
-        "version": "2.0.2",
-        "title": "Swagger test",
-        "description": "Showing off swagger-ui-express",
-        "license": {
-            "name": "MIT",
-            "url": "https://opensource.org/licenses/MIT"
-        }
-    },
-    "consumes": ["application/json", "multipart/form-data"],
-    "produces": ["application/json", "multipart/form-data"],
-    "servers": [{ "url": "http://localhost:3000" }],
-    "tags": [
-        {
-            "name": "Users",
-            "description": "Authorization endpoints"
-        },
-        {
-            "name": "Services",
-            "description": "Partner contact information endpoints"
-        },
-        {
-            "name": "News",
-            "description": "News endpoints"
-        },
-        {
-            "name": "Notices",
-            "description": "Notices endpoints"
-        }
-    ],
-    "paths": {
-        "/api/users/register": {
-            "post": {
-                "tags": ["Users"],
-                "summary": "Реєстрація нового користувача",
-                "requestBody": {
-                    "description": "Registration's object",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/RegistrationRequest"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/RegistrationResponse"
-                                }
-                            }
-                        }
-                    },
-                    "default": {
-                        "description": "Other responses",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/users/login": {
-            "post": {
-                "tags": ["Users"],
-                "operationId": "loginUser",
-                "summary": "Вхід в особистий кабінет",
-                "requestBody": {
-                    "description": "Login's object",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/LoginRequest"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/LoginResponse"
-                                }
-                            }
-                        }
-                    },
-                   "default": {
-                        "description": "Other responses",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/users/refresh": {
-            "get": {
-                "tags": ["Users"],
-                "summary": "Отримання данних користувача при перезавантаженні сторінки",
-                "security": [{ "Bearer": [] }],
-
-                "responses": {
-                    "200": {
-                        "description": "Successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/RefreshResponse"
-                                }
-                            }
-                        }
-                    },
-                    "default": {
-                        "description": "Other responses",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/users/current": {
-            "get": {
-                "tags": ["Users"],
-                "summary": "Отримання данних авторизованого користувача",
-                "security": [{ "Bearer": [] }],
-                
-                "responses": {
-                    "200": {
-                        "description": "Successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/CurrentResponse"
-                                }
-                            }
-                        }
-                    },
-                    "default": {
-                        "description": "Other responses",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error"
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "patch": {
-                "tags": ["Users"],
-                "summary": "Оновлення данних авторизованого користувача",
-                "security": [{ "Bearer": [] }],
-
-                "requestBody": {
-                    "description": "User's new data",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/CurrentPatchRequest"
-                            }
-                        }
-                    }
-                },
-                
-                "responses": {
-                    "200": {
-                        "description": "Successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Message"
-                                }
-                            }
-                        }
-                    },
-                    "default": {
-                        "description": "Other responses",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/users/logout": {
-            "post": {
-                "tags": ["Users"],
-                "summary": "Вихід з особистого кабінету",
-                "security": [{ "Bearer": [] }],
-
-                "responses": {
-                    "204": {
-                        "description": "Successful operation",
-                        "content": {
-                            "application/json": {}
-                        }
-                    },
-                    "default": {
-                        "description": "Other responses",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/users/own": {
-            "get": {
-                "tags": ["Users"],
-                "summary": "Список власних домашніх тварин",
-                "parameters": [
-                    {   
-                        "name": "page",
-                        "in": "query",
-                        "description": "page number of a favorite list",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "example": "1"
-                    },
-                    {   
-                        "name": "limit",
-                        "in": "query",
-                        "description": "number of a favorite notices on a one page",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "example": "200" 
-                    }
-                ],
-                "security": [{ "Bearer": [] }],
-
-                "responses": {
-                    "200": {
-                        "description": "Successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/OwnItemResponse"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "default": {
-                        "description": "Other responses",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error"
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "post": {
-                "tags": ["Users"],
-                "summary": "Додавання картки власної тварини",
-                "parameters": [],
-                "security": [{ "Bearer": [] }],
-
-                "requestBody": {
-                    "description": "Add pett into a list",
-                    "required": true,
-                    "content": {
-                        "multipart/form-data": {
-                            "schema": {
-                                "$ref": "#/components/schemas/OwnAddRequest"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Message"
-                                }
-                            }
-                        }
-                    },
-                   "default": {
-                        "description": "Other responses",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/users/own/{ownId}": {
-            "delete": {
-                "tags": ["Users"],
-                "summary": "Видалення картки власної тварини",
-                "security": [{ "Bearer": [] }],
-                "parameters": [
-                    {   
-                        "name": "ownId",
-                        "in": "path",
-                        "description": "Id of notice",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        },
-                        "example": "yjtyj524tr5j4rtjt"
-                    }
-                ],
-
-                "responses": {
-                    "200": {
-                        "description": "Successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Message"
-                                }
-                            }
-                        }
-                    },
-                    "default": {
-                        "description": "Other responses",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error"
-                                }
-                            }
-                        }
-                    }
-                }
-            }      
-        },
-        "/api/users/favorite": {
-            "get": {
-                "tags": ["Users"],
-                "summary": "Отримує масив ідентифікаторів оголошень, доданих до favorite",
-                "parameters": [],
-                "security": [{ "Bearer": [] }],
-
-                "responses": {
-                    "200": {
-                        "description": "Successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/FavoriteItemResponse"
-                                    },
-                                    "example": ["63e42f604d3a7943c4ad4320", "63e42f604d3a7943c4ad4321", "63e42f604d3a7943c4ad4322"]
-                                } 
-                            }
-                        }
-                    },
-                    "default": {
-                        "description": "Other responses",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/users/favorite/{noticeId}": {
-            "patch": {
-                "tags": ["Users"],
-                "summary": "Оновлення статусу favorite в оголошенні",
-                "parameters": [
-                    {   
-                        "name": "noticeId",
-                        "in": "path",
-                        "description": "Id of notice",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        },
-                        "example": "yjtyj524tr5j4rtjt"
-                    }
-                ],
-                "security": [{ "Bearer": [] }],
-
-                "responses": {
-                    "200": {
-                        "description": "Successful operation",
-                        "content": {
-                            "application/json": {
-                               "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/Message"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "default": {
-                        "description": "Other responses",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error"
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "tags": ["Users"],
-                "summary": "Видалення статусу favorite в оголошенні",
-                "parameters": [
-                    {   
-                        "name": "noticeId",
-                        "in": "path",
-                        "description": "Id of notice",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        },
-                        "example": "yjtyj524tr5j4rtjt"
-                    }
-                ],
-                "security": [{ "Bearer": [] }],
-
-                "responses": {
-                    "200": {
-                        "description": "Successful operation",
-                        "content": {
-                            "application/json": {
-                               "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/Message"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "default": {
-                        "description": "Other responses",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/users/avatars": {
-            "post": {
-                "tags": ["Users"],
-                "summary": "Оновлення аватарки користувача",
-                "parameters": [],
-                "security": [{ "Bearer": [] }],
-
-                "requestBody": {
-                    "description": "Image",
-                    "required": true,
-                    "content": {
-                        "multipart/form-data": {
-                            "schema": {
-                                "$ref": "#/components/schemas/avatar"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Message"
-                                }
-                            }
-                        }
-                    },
-                   "default": {
-                        "description": "Other responses",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error"
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "tags": ["Users"],
-                "summary": "Видалення аватарки користувача",
-                "security": [{ "Bearer": [] }],
-
-                "responses": {
-                    "200": {
-                        "description": "Successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Message"
-                                }
-                            }
-                        }
-                    },
-                   "default": {
-                        "description": "Other responses",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/notices": {
-            "post": {
-                "tags": ["Notices"],
-                "summary": "Додає оголошення авторизованим користувачем",
-                "parameters": [],
-                "security": [{ "Bearer": [] }],
-                
-                "requestBody": {
-                    "description": "new notice data",
-                    "required": true,
-                    "content": {
-                        "multipart/form-data": {
-                            "schema": {
-                                "$ref": "#/components/schemas/NoticeAddRequest"
-                            }
-                        }
-                    }
-                },
-
-                "responses": {
-                    "201": {
-                        "description": "Successful operation",
-                        "content": {
-                            "application/json": {
-                               "schema": {
-                                    "$ref": "#/components/schemas/NoticesItemResponse"
-                                    
-                                }
-                            }
-                        }
-                    },
-                    "default": {
-                        "description": "Other responses",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error"
-                                }
-                            }
-                        }
-                    }
-                }
-            } 
-        },
-        "/api/notices/{noticeId}": {
-            "get": {
-                "tags": ["Notices"],
-                "summary": "Отримує вибране оголошення",
-                "parameters": [
-                    {   
-                        "name": "noticeId",
-                        "in": "path",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-
-                "responses": {
-                    "200": {
-                        "description": "Successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/NoticeByIdResponse"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "default": {
-                        "description": "Others responses",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error"
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "tags": ["Notices"],
-                "summary": "Видаляє оголошення",
-                "parameters": [
-                    {   
-                        "name": "noticeId",
-                        "in": "path",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "security": [{ "Bearer": [] }],
-
-                "responses": {
-                    "201": {
-                        "description": "Successful operation",
-                        "content": {
-                            "application/json": {
-                               "schema": {
-                                    "$ref": "#/components/schemas/NoticesItemResponse"
-                                    
-                                }
-                            }
-                        }
-                    },
-                    "default": {
-                        "description": "Other responses",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error"
-                                }
-                            }
-                        }
-                    }
-                }
-            } 
-        },
-        "/api/notices/category/{categoryName}": {
-            "get": {
-                "tags": ["Notices"],
-                "summary": "отримання оголошень вибранної категорії",
-                "parameters": [
-                    {   
-                        "name": "categoryName",
-                        "in": "path",
-                        "default": "sell",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {   
-                        "name": "search",
-                        "in": "query",
-                        "description": "search query for a favorite list",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "example": "dog"
-                    },
-                    {   
-                        "name": "page",
-                        "in": "query",
-                        "description": "page number of a favorite list",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "example": "1"
-                    },
-                    {   
-                        "name": "limit",
-                        "in": "query",
-                        "description": "number of a favorite notices on a one page",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "example": "200" 
-                    }
-                ],
-
-                "responses": {
-                    "200": {
-                        "description": "Successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/NoticeCategoryResponse"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "default": {
-                        "description": "Others responses",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error"
-                                }
-                            }
-                        }
-                    }
-                }
-            } 
-        },
-        "/api/notices/own": {
-            "get": {
-                "tags": ["Notices"],
-                "summary": "Отримує оголошення, додані авторизованим користувачем",
-                "parameters": [
-                    {   
-                        "name": "search",
-                        "in": "query",
-                        "description": "search query for a notice list",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "example": "dog"
-                    }
-                ],
-                "security": [{ "Bearer": [] }],
-
-                "responses": {
-                    "200": {
-                        "description": "Successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/NoticeCategoryResponse"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "default": {
-                        "description": "Others responses",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-         "/api/notices/favorite": {
-            "get": {
-                "tags": ["Notices"],
-                "summary": "для авторизованого користувача отримує оголошення, додані до улюблених",
-                "parameters": [
-                    {   
-                        "name": "search",
-                        "in": "query",
-                        "description": "search query for a notice list",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "example": "dog"
-                    }
-                ],
-                "security": [{ "Bearer": [] }],
-
-                "responses": {
-                    "200": {
-                        "description": "Successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/NoticeCategoryResponse"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "default": {
-                        "description": "Others responses",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/services": {
-            "get": {
-                "tags": ["Services"],
-                "summary": "Партнери",
-                "parameters": [],
-                "security": [{ "Bearer": [] }],
-
-                "responses": {
-                    "200": {
-                        "description": "Successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/ServicesResponse"
-                                    }
-                                }
-                            }   
-                        }
-                    },
-                    "default": {
-                        "description": "Other responses",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/news": {
-            "get": {
-                "tags": ["News"],
-                "summary": "Стрічка новин",
-                "parameters": [],
-                "security": [{ "Bearer": [] }],
-
-                "responses": {
-                    "200": {
-                        "description": "Successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/NewsItemResponse"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "default": {
-                        "description": "Other responses",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    },
-    "components": {
-        "schemas": {
-            "RegistrationRequest": {
-                "type": "object",
-                "required": ["email", "password"],
-                "properties": {
-                    "email": {
-                        "type": "string",
-                        "description": "User email",
-                        "format": "email",
-                        "example": "Anna5@gmail.com"
-                    },
-                    "password": {
-                        "type": "string",
-                        "description": "User password",
-                        "example": "Anna12345"
-                    },
-                    "name": {
-                        "type": "string",
-                        "description": "User name",
-                        "example": "Anna"
-                    },
-                    "address": {
-                        "type": "string",
-                        "description": "User address",
-                        "example": "Kyiv"
-                    },
-                    "phone": {
-                        "type": "String",
-                        "description": "User phone number",
-                        "example": "+380998085001"
-                    }
-                }
-            },
-            "RegistrationResponse": {
-                "type": "object",
-                "properties": {
-                    "email": {
-                        "type": "string",
-                        "description": "User's email",
-                        "format": "email"
-                    }
-                }
-            },
-            "LoginRequest": {
-                "type": "object",
-                "required": ["email", "password"],
-                "properties": {
-                    "email": {
-                        "type": "string",
-                        "description": "User's email",
-                        "example": "Anna5@gmail.com",
-                        "format": "email"
-                    },
-                    "password": {
-                        "type": "string",
-                        "description": "User's password",
-                        "example": "Anna12345"
-                    }
-                }
-            },
-            "LoginResponse": {
-                "type": "object",
-                "properties": {
-                    "token": {
-                        "type": "string"
-                    },
-                    "userId": {
-                        "type": "string"
-                    }
-                }
-            },
-            "RefreshResponse": {
-                "type": "object",
-                "properties": {
-                    "userId": {
-                        "type": "string"
-                    }
-                }
-            },
-            "CurrentResponse": {
-                "type": "object",
-                "properties": {
-                    "email": {
-                        "type": "string",
-                        "description": "User email",
-                        "format": "email",
-                        "example": "Anna12@gmail.com"
-                    },
-                    "name": {
-                        "type": "string",
-                        "description": "User name",
-                        "example": "Anna"
-                        },
-                    "address": {
-                        "type": "string",
-                        "description": "User address",
-                        "example": "Kyiv"
-                    },
-                    "phone": {
-                        "type": "string",
-                        "description": "User phone number",
-                        "example": "+380998085001"
-                    },
-                    "birthday": {
-                        "type": "Data",
-                        "description": "User birthday",
-                        "example": "11.03.1998"
-                    },
-                    "avatarURL": {
-                        "type": "string",
-                        "description": "User avatar",
-                        "example": "https://storage.googleapis.com/kidslikev2_bucket/pets-support/images/sponsors/frame_287.png"
-                    }
-                }
-            },
-            "CurrentPatchRequest": {
-                "type": "object",
-                "properties": {
-                    "email": {
-                        "type": "string",
-                        "description": "User email",
-                        "format": "email",
-                        "example": "Anna5@gmail.com"
-                    },
-                    "name": {
-                        "type": "string",
-                        "description": "User name",
-                        "example": "Anna"
-                    },
-                    "address": {
-                        "type": "string",
-                        "description": "User address",
-                        "example": "Kyiv"
-                    },
-                    "phone": {
-                        "type": "String",
-                        "description": "User phone number",
-                        "example": "+380998085001"
-                    },
-                    "birthday": {
-                        "type": "Data",
-                        "description": "User birthday",
-                        "example": "11.03.1998"
-                    }
-                }
-            },
-            "avatar": {
-                "type": "object",
-                "properties": {
-                    "avatar": {
-                        "type": "string",
-                        "format": "binary"
-                    }
-                }
-            },
-            "FavoriteItemResponse": {
-                "type": "string",
-                "description": "notice id",
-                "example": "63e42f604d3a7943c4ad4320"
-            },
-            "OwnAddRequest": {
-                "type": "object",
-                "required": ["name", "breed", "birthdate"],
-                "properties": {
-                    "name": {
-                      "type": "string",
-                      "description": "Pet name",
-                      "example": "Rich"
-                    },
-                    "birthdate": {
-                      "type": "Date",
-                      "description": "Birthdate of a pet",
-                      "example": "01.01.2020"
-                    },
-                    "breed": {
-                      "type": "string",
-                      "example": "Pomeranian"
-                    },
-                    "comments": {
-                      "type": "string",
-                      "description": "about own pet"
-                    },
-                    "pet_avatar": {
-                        "type": "string",
-                        "format": "binary"
-                    }
-                }
-            },
-            "OwnItemResponse": {
-                "type": "object",
-                "required": ["name", "breed"],
-                "properties": {
-                    "_id": {
-                      "type": "string",
-                      "description": "Pet id"
-                    },
-                    "name": {
-                      "type": "string",
-                      "description": "Pet name",
-                      "example": "Rich"
-                    },
-                    "birthdate": {
-                      "type": "Date",
-                      "description": "Birthdate of a pet"
-                    },
-                    "breed": {
-                      "type": "string",
-                      "description": "Location of a pet",
-                      "example": "Kyiv"
-                    },
-                    "comments": {
-                      "type": "string",
-                      "description": "about own pet"
-                    }
-                }
-            },
-            "NoticeByIdResponse": {
-                "type": "object",
-                "properties": {
-                    "_id": {
-                      "type": "string",
-                      "description": "notice id"
-                    },
-                    "title": {
-                      "type": "string",
-                      "description": "Notice  title",
-                      "example": "Сute dog looking for a home"
-                    },
-                    "name": {
-                      "type": "string",
-                      "description": "Pet name",
-                      "example": "Rich"
-                    },
-                    "birthdate": {
-                      "type": "Date",
-                      "description": "Birthdate of a pet"
-                    },
-                    "location": {
-                      "type": "string",
-                      "description": "Kyiv"
-                    },
-                    "breed": {
-                      "type": "string"
-                    },
-                    "sex": {
-                      "type": "string",
-                      "example": "female"
-                    },
-                    "comments": {
-                      "type": "string",
-                      "description": "description of a notice"
-                    },
-                    "price": {
-                      "type": "Number",
-                      "description": "Notice  price",
-                      "example": "50"
-                    },
-                    "category": {
-                      "type": "string",
-                      "description": "Notice category",
-                      "example": "sell"
-                    },
-                    "owner": {
-                        "type": "object",
-                        "properties": {
-                            "_id": {
-                                "type": "string",
-                                "description": "User id"
-                            },
-                            "email": {
-                                "type": "string",
-                                "description": "User email",
-                                "format": "email",
-                                "example": "Anna5@gmail.com"
-                            },
-                            "phone": {
-                                "type": "String",
-                                "description": "User phone number",
-                                "example": "+380998085001"
-                            }
-                        }
-                    }
-                }
-            },
-            "NoticeCategoryResponse": {
-                "type": "object",
-                "properties": {
-                    "_id": {
-                      "type": "string",
-                      "description": "notice id"
-                    },
-                    "title": {
-                      "type": "string",
-                      "description": "Notice  title",
-                      "example": "Сute dog looking for a home"
-                    },
-                    "name": {
-                      "type": "string",
-                      "description": "Pet name",
-                      "example": "Rich"
-                    },
-                    "birthdate": {
-                      "type": "Date",
-                      "description": "Birthdate of a pet"
-                    },
-                    "location": {
-                      "type": "string",
-                      "description": "Kyiv"
-                    },
-                    "breed": {
-                      "type": "string"
-                    },
-                    "sex": {
-                      "type": "string",
-                      "example": "female"
-                    },
-                    "comments": {
-                      "type": "string",
-                      "description": "description of a notice"
-                    },
-                    "price": {
-                      "type": "Number",
-                      "description": "Notice  price",
-                      "example": "50"
-                    },
-                    "category": {
-                      "type": "string",
-                      "description": "Notice category",
-                      "example": "sell"
-                    },
-                    "owner": {
-                        "type": "object",
-                        "properties": {
-                            "_id": {
-                                "type": "string",
-                                "description": "User id"
-                            }
-                        }
-                    }
-                }
-            },
-            "NoticeAddRequest": {
-                "type": "object",
-                "required": ["name", "breed", "birthdate", "location", "title", "comments", "price", "category"],
-                "properties": {
-                    "title": {
-                      "type": "string",
-                      "description": "Advertisement title",
-                      "example": "Сute dog looking for a home"
-                    },
-                    "name": {
-                      "type": "string",
-                      "description": "Pet name",
-                      "example": "Rich"
-                    },
-                    "birthdate": {
-                      "type": "Date",
-                      "description": "Birthdate of a pet",
-                      "example": "01.12.2022"
-                    },
-                    "location": {
-                      "type": "string",
-                      "example": "Kyiv"
-                    },
-                    "breed": {
-                      "type": "string",
-                      "example": "Labrador"
-                    },
-                    "sex": {
-                      "type": "string",
-                      "enum": ["male", "female"],
-                      "default": "female"
-                    },
-                    "comments": {
-                      "type": "string",
-                      "description": "description of a notice",
-                      "example": "Cute dog"
-                    },
-                    "price": {
-                      "type": "string",
-                      "description": "Pet price",
-                      "example": "500"
-                    },
-                    "category": {
-                      "type": "string",
-                      "enum": ["sell", "lost-found", "for-free"],
-                      "default": "sell"
-                    },
-                    "notice_avatar": {
-                        "type": "string",
-                        "description": "Pet photo",
-                        "format": "binary"
-                    }
-                }
-            },
-            "ServicesResponse": {
-                "type": "object",
-                "properties": {
-                    "title": {
-                    "type": "string",
-                    "description": "Company's name",
-                    "example": "Happy Paw"
-                    },
-                    "url": {
-                    "type": "string",
-                    "description": "Company's website",
-                    "example": "https://dogcat.com.ua"
-                    },
-                    "addressUrl": {
-                    "type": "string",
-                    "description": "Company's location",
-                    "example": "https://goo.gl/maps/iq8NXEUf31EAQCzc6"
-                    },
-                    "imageUrl": {
-                    "type": "string",
-                    "description": "Company's avatar",
-                    "example": "https://storage.googleapis.com/kidslikev2_bucket/pets-support/images/sponsors/frame_287.png"
-                    },
-                    "address": {
-                    "type": "string",
-                    "description": "Company's address",
-                    "example": "Fedorivka, Kyiv Oblast, Ukraine, 07372"
-                    },
-                    "phone": {
-                    "type": "number",
-                    "description": "Company's phone number",
-                    "example": "+380442900329"
-                    },
-                    "email": {
-                    "type": "string",
-                    "description": "Company's email",
-                    "example": "hello@happypaw.ua"
-                    },
-                    "workDays": {
-                        "type": "array",
-                        "items": {
-                            "type": "object",
-                            "properties": {
-                                "isOpen": {
-                                    "type": "boolean"
-                                },
-                                "from": {
-                                    "type": "string",
-                                    "description": "Opening time"
-                                },
-                                "to": {
-                                    "type": "string",
-                                    "description": "Close time"
-                                },
-                                "day": {
-                                    "type": "string"
-                                }
-                            }
-                        },
-                        
-                        "example": [
-                            { "isOpen": true, "from": "11:00", "to": "16:00", "day": "SA" },
-                            { "isOpen": true, "from": "11:00", "to": "16:00", "day": "SU" }
-                        ]
-                    }  
-                }
-            },
-            "NewsItemResponse": {
-                "type": "object",
-                "properties": {
-                    "title": {
-                      "type": "string",
-                      "description": "Article's title"
-                    },
-                    "url": {
-                      "type": "string",
-                      "description": "Article source",
-                      "example": "https://goo.gl/maps/iq8NXEUf31EAQCzc6"
-                    },
-                    "description": {
-                      "type": "string",
-                      "description": "Article's text"
-                    },
-                    "date": {
-                      "type": "string",
-                      "description": "Article publication date",
-                      "example": "2022-08-12"
-                    }
-                }
-            },
-            "Message": {
-                "type": "object",
-                "properties": {
-                    "code": {
-                        "type": "string",
-                        "example": "Successful operation"
-                    }
-                }    
-            },
-            "Error": {
-                "type": "object",
-                "properties": {
-                    "code": {
-                        "type": "string",
-                        "example": "Bad request"
-                    }
-                }    
-            }
-        },
-        "securitySchemes": {
-            "Bearer": {
-                "type": "http",
-                "scheme": "bearer",
-                "bearerFormat": "JWT"
-            }
-        }
+  "openapi": "3.0.1",
+  "info": {
+    "version": "2.0.2",
+    "title": "Swagger test",
+    "description": "Showing off swagger-ui-express",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
     }
+  },
+  "consumes": ["application/json", "multipart/form-data"],
+  "produces": ["application/json", "multipart/form-data"],
+  "servers": [{ "url": "https://petly-ukraine.up.railway.app" }],
+  "tags": [
+    {
+      "name": "Users",
+      "description": "Authorization endpoints"
+    },
+    {
+      "name": "Services",
+      "description": "Partner contact information endpoints"
+    },
+    {
+      "name": "News",
+      "description": "News endpoints"
+    },
+    {
+      "name": "Notices",
+      "description": "Notices endpoints"
+    }
+  ],
+  "paths": {
+    "/api/users/register": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "Реєстрація нового користувача",
+        "requestBody": {
+          "description": "Registration's object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegistrationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegistrationResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Other responses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/login": {
+      "post": {
+        "tags": ["Users"],
+        "operationId": "loginUser",
+        "summary": "Вхід в особистий кабінет",
+        "requestBody": {
+          "description": "Login's object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Other responses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/refresh": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Отримання данних користувача при перезавантаженні сторінки",
+        "security": [{ "Bearer": [] }],
+
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RefreshResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Other responses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/current": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Отримання данних авторизованого користувача",
+        "security": [{ "Bearer": [] }],
+
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CurrentResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Other responses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Users"],
+        "summary": "Оновлення данних авторизованого користувача",
+        "security": [{ "Bearer": [] }],
+
+        "requestBody": {
+          "description": "User's new data",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CurrentPatchRequest"
+              }
+            }
+          }
+        },
+
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Other responses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/logout": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "Вихід з особистого кабінету",
+        "security": [{ "Bearer": [] }],
+
+        "responses": {
+          "204": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "default": {
+            "description": "Other responses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/own": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Список власних домашніх тварин",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "page number of a favorite list",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "example": "1"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "number of a favorite notices on a one page",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "example": "200"
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OwnItemResponse"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Other responses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Users"],
+        "summary": "Додавання картки власної тварини",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+
+        "requestBody": {
+          "description": "Add pett into a list",
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/OwnAddRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Other responses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/own/{ownId}": {
+      "delete": {
+        "tags": ["Users"],
+        "summary": "Видалення картки власної тварини",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "name": "ownId",
+            "in": "path",
+            "description": "Id of notice",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "yjtyj524tr5j4rtjt"
+          }
+        ],
+
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Other responses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/favorite": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Отримує масив ідентифікаторів оголошень, доданих до favorite",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FavoriteItemResponse"
+                  },
+                  "example": [
+                    "63e42f604d3a7943c4ad4320",
+                    "63e42f604d3a7943c4ad4321",
+                    "63e42f604d3a7943c4ad4322"
+                  ]
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Other responses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/favorite/{noticeId}": {
+      "patch": {
+        "tags": ["Users"],
+        "summary": "Оновлення статусу favorite в оголошенні",
+        "parameters": [
+          {
+            "name": "noticeId",
+            "in": "path",
+            "description": "Id of notice",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "yjtyj524tr5j4rtjt"
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Message"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Other responses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Users"],
+        "summary": "Видалення статусу favorite в оголошенні",
+        "parameters": [
+          {
+            "name": "noticeId",
+            "in": "path",
+            "description": "Id of notice",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "yjtyj524tr5j4rtjt"
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Message"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Other responses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/avatars": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "Оновлення аватарки користувача",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+
+        "requestBody": {
+          "description": "Image",
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/avatar"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Other responses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Users"],
+        "summary": "Видалення аватарки користувача",
+        "security": [{ "Bearer": [] }],
+
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Other responses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/notices": {
+      "post": {
+        "tags": ["Notices"],
+        "summary": "Додає оголошення авторизованим користувачем",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+
+        "requestBody": {
+          "description": "new notice data",
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/NoticeAddRequest"
+              }
+            }
+          }
+        },
+
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NoticesItemResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Other responses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/notices/{noticeId}": {
+      "get": {
+        "tags": ["Notices"],
+        "summary": "Отримує вибране оголошення",
+        "parameters": [
+          {
+            "name": "noticeId",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NoticeByIdResponse"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Others responses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Notices"],
+        "summary": "Видаляє оголошення",
+        "parameters": [
+          {
+            "name": "noticeId",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NoticesItemResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Other responses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/notices/category/{categoryName}": {
+      "get": {
+        "tags": ["Notices"],
+        "summary": "отримання оголошень вибранної категорії",
+        "parameters": [
+          {
+            "name": "categoryName",
+            "in": "path",
+            "default": "sell",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "search query for a favorite list",
+            "schema": {
+              "type": "string"
+            },
+            "example": "dog"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "page number of a favorite list",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "example": "1"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "number of a favorite notices on a one page",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "example": "200"
+          }
+        ],
+
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NoticeCategoryResponse"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Others responses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/notices/own": {
+      "get": {
+        "tags": ["Notices"],
+        "summary": "Отримує оголошення, додані авторизованим користувачем",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "search query for a notice list",
+            "schema": {
+              "type": "string"
+            },
+            "example": "dog"
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NoticeCategoryResponse"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Others responses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/notices/favorite": {
+      "get": {
+        "tags": ["Notices"],
+        "summary": "для авторизованого користувача отримує оголошення, додані до улюблених",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "search query for a notice list",
+            "schema": {
+              "type": "string"
+            },
+            "example": "dog"
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NoticeCategoryResponse"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Others responses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/services": {
+      "get": {
+        "tags": ["Services"],
+        "summary": "Партнери",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ServicesResponse"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Other responses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/news": {
+      "get": {
+        "tags": ["News"],
+        "summary": "Стрічка новин",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NewsItemResponse"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Other responses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "RegistrationRequest": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User email",
+            "format": "email",
+            "example": "Anna5@gmail.com"
+          },
+          "password": {
+            "type": "string",
+            "description": "User password",
+            "example": "Anna12345"
+          },
+          "name": {
+            "type": "string",
+            "description": "User name",
+            "example": "Anna"
+          },
+          "address": {
+            "type": "string",
+            "description": "User address",
+            "example": "Kyiv"
+          },
+          "phone": {
+            "type": "String",
+            "description": "User phone number",
+            "example": "+380998085001"
+          }
+        }
+      },
+      "RegistrationResponse": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User's email",
+            "format": "email"
+          }
+        }
+      },
+      "LoginRequest": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User's email",
+            "example": "Anna5@gmail.com",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "description": "User's password",
+            "example": "Anna12345"
+          }
+        }
+      },
+      "LoginResponse": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          }
+        }
+      },
+      "RefreshResponse": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          }
+        }
+      },
+      "CurrentResponse": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User email",
+            "format": "email",
+            "example": "Anna12@gmail.com"
+          },
+          "name": {
+            "type": "string",
+            "description": "User name",
+            "example": "Anna"
+          },
+          "address": {
+            "type": "string",
+            "description": "User address",
+            "example": "Kyiv"
+          },
+          "phone": {
+            "type": "string",
+            "description": "User phone number",
+            "example": "+380998085001"
+          },
+          "birthday": {
+            "type": "Data",
+            "description": "User birthday",
+            "example": "11.03.1998"
+          },
+          "avatarURL": {
+            "type": "string",
+            "description": "User avatar",
+            "example": "https://storage.googleapis.com/kidslikev2_bucket/pets-support/images/sponsors/frame_287.png"
+          }
+        }
+      },
+      "CurrentPatchRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User email",
+            "format": "email",
+            "example": "Anna5@gmail.com"
+          },
+          "name": {
+            "type": "string",
+            "description": "User name",
+            "example": "Anna"
+          },
+          "address": {
+            "type": "string",
+            "description": "User address",
+            "example": "Kyiv"
+          },
+          "phone": {
+            "type": "String",
+            "description": "User phone number",
+            "example": "+380998085001"
+          },
+          "birthday": {
+            "type": "Data",
+            "description": "User birthday",
+            "example": "11.03.1998"
+          }
+        }
+      },
+      "avatar": {
+        "type": "object",
+        "properties": {
+          "avatar": {
+            "type": "string",
+            "format": "binary"
+          }
+        }
+      },
+      "FavoriteItemResponse": {
+        "type": "string",
+        "description": "notice id",
+        "example": "63e42f604d3a7943c4ad4320"
+      },
+      "OwnAddRequest": {
+        "type": "object",
+        "required": ["name", "breed", "birthdate"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Pet name",
+            "example": "Rich"
+          },
+          "birthdate": {
+            "type": "Date",
+            "description": "Birthdate of a pet",
+            "example": "01.01.2020"
+          },
+          "breed": {
+            "type": "string",
+            "example": "Pomeranian"
+          },
+          "comments": {
+            "type": "string",
+            "description": "about own pet"
+          },
+          "pet_avatar": {
+            "type": "string",
+            "format": "binary"
+          }
+        }
+      },
+      "OwnItemResponse": {
+        "type": "object",
+        "required": ["name", "breed"],
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "Pet id"
+          },
+          "name": {
+            "type": "string",
+            "description": "Pet name",
+            "example": "Rich"
+          },
+          "birthdate": {
+            "type": "Date",
+            "description": "Birthdate of a pet"
+          },
+          "breed": {
+            "type": "string",
+            "description": "Location of a pet",
+            "example": "Kyiv"
+          },
+          "comments": {
+            "type": "string",
+            "description": "about own pet"
+          }
+        }
+      },
+      "NoticeByIdResponse": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "notice id"
+          },
+          "title": {
+            "type": "string",
+            "description": "Notice  title",
+            "example": "Сute dog looking for a home"
+          },
+          "name": {
+            "type": "string",
+            "description": "Pet name",
+            "example": "Rich"
+          },
+          "birthdate": {
+            "type": "Date",
+            "description": "Birthdate of a pet"
+          },
+          "location": {
+            "type": "string",
+            "description": "Kyiv"
+          },
+          "breed": {
+            "type": "string"
+          },
+          "sex": {
+            "type": "string",
+            "example": "female"
+          },
+          "comments": {
+            "type": "string",
+            "description": "description of a notice"
+          },
+          "price": {
+            "type": "Number",
+            "description": "Notice  price",
+            "example": "50"
+          },
+          "category": {
+            "type": "string",
+            "description": "Notice category",
+            "example": "sell"
+          },
+          "owner": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "description": "User id"
+              },
+              "email": {
+                "type": "string",
+                "description": "User email",
+                "format": "email",
+                "example": "Anna5@gmail.com"
+              },
+              "phone": {
+                "type": "String",
+                "description": "User phone number",
+                "example": "+380998085001"
+              }
+            }
+          }
+        }
+      },
+      "NoticeCategoryResponse": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "notice id"
+          },
+          "title": {
+            "type": "string",
+            "description": "Notice  title",
+            "example": "Сute dog looking for a home"
+          },
+          "name": {
+            "type": "string",
+            "description": "Pet name",
+            "example": "Rich"
+          },
+          "birthdate": {
+            "type": "Date",
+            "description": "Birthdate of a pet"
+          },
+          "location": {
+            "type": "string",
+            "description": "Kyiv"
+          },
+          "breed": {
+            "type": "string"
+          },
+          "sex": {
+            "type": "string",
+            "example": "female"
+          },
+          "comments": {
+            "type": "string",
+            "description": "description of a notice"
+          },
+          "price": {
+            "type": "Number",
+            "description": "Notice  price",
+            "example": "50"
+          },
+          "category": {
+            "type": "string",
+            "description": "Notice category",
+            "example": "sell"
+          },
+          "owner": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "description": "User id"
+              }
+            }
+          }
+        }
+      },
+      "NoticeAddRequest": {
+        "type": "object",
+        "required": [
+          "name",
+          "breed",
+          "birthdate",
+          "location",
+          "title",
+          "comments",
+          "price",
+          "category"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Advertisement title",
+            "example": "Сute dog looking for a home"
+          },
+          "name": {
+            "type": "string",
+            "description": "Pet name",
+            "example": "Rich"
+          },
+          "birthdate": {
+            "type": "Date",
+            "description": "Birthdate of a pet",
+            "example": "01.12.2022"
+          },
+          "location": {
+            "type": "string",
+            "example": "Kyiv"
+          },
+          "breed": {
+            "type": "string",
+            "example": "Labrador"
+          },
+          "sex": {
+            "type": "string",
+            "enum": ["male", "female"],
+            "default": "female"
+          },
+          "comments": {
+            "type": "string",
+            "description": "description of a notice",
+            "example": "Cute dog"
+          },
+          "price": {
+            "type": "string",
+            "description": "Pet price",
+            "example": "500"
+          },
+          "category": {
+            "type": "string",
+            "enum": ["sell", "lost-found", "for-free"],
+            "default": "sell"
+          },
+          "notice_avatar": {
+            "type": "string",
+            "description": "Pet photo",
+            "format": "binary"
+          }
+        }
+      },
+      "ServicesResponse": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Company's name",
+            "example": "Happy Paw"
+          },
+          "url": {
+            "type": "string",
+            "description": "Company's website",
+            "example": "https://dogcat.com.ua"
+          },
+          "addressUrl": {
+            "type": "string",
+            "description": "Company's location",
+            "example": "https://goo.gl/maps/iq8NXEUf31EAQCzc6"
+          },
+          "imageUrl": {
+            "type": "string",
+            "description": "Company's avatar",
+            "example": "https://storage.googleapis.com/kidslikev2_bucket/pets-support/images/sponsors/frame_287.png"
+          },
+          "address": {
+            "type": "string",
+            "description": "Company's address",
+            "example": "Fedorivka, Kyiv Oblast, Ukraine, 07372"
+          },
+          "phone": {
+            "type": "number",
+            "description": "Company's phone number",
+            "example": "+380442900329"
+          },
+          "email": {
+            "type": "string",
+            "description": "Company's email",
+            "example": "hello@happypaw.ua"
+          },
+          "workDays": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "isOpen": {
+                  "type": "boolean"
+                },
+                "from": {
+                  "type": "string",
+                  "description": "Opening time"
+                },
+                "to": {
+                  "type": "string",
+                  "description": "Close time"
+                },
+                "day": {
+                  "type": "string"
+                }
+              }
+            },
+
+            "example": [
+              { "isOpen": true, "from": "11:00", "to": "16:00", "day": "SA" },
+              { "isOpen": true, "from": "11:00", "to": "16:00", "day": "SU" }
+            ]
+          }
+        }
+      },
+      "NewsItemResponse": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Article's title"
+          },
+          "url": {
+            "type": "string",
+            "description": "Article source",
+            "example": "https://goo.gl/maps/iq8NXEUf31EAQCzc6"
+          },
+          "description": {
+            "type": "string",
+            "description": "Article's text"
+          },
+          "date": {
+            "type": "string",
+            "description": "Article publication date",
+            "example": "2022-08-12"
+          }
+        }
+      },
+      "Message": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "Successful operation"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "Bad request"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
 }
-
-
-
-
