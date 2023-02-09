@@ -432,10 +432,7 @@
                         "content": {
                             "application/json": {
                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/Message"
-                                    }
+                                    "$ref": "#/components/schemas/Message"
                                 }
                             }
                         }
@@ -475,10 +472,7 @@
                         "content": {
                             "application/json": {
                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/Message"
-                                    }
+                                    "$ref": "#/components/schemas/Message"
                                 }
                             }
                         }
@@ -586,12 +580,12 @@
                 },
 
                 "responses": {
-                    "201": {
+                    "200": {
                         "description": "Successful operation",
                         "content": {
                             "application/json": {
                                "schema": {
-                                    "$ref": "#/components/schemas/NoticesItemResponse"
+                                    "$ref": "#/components/schemas/Message"
                                     
                                 }
                             }
@@ -630,10 +624,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/NoticeByIdResponse"
-                                    }
+                                    "$ref": "#/components/schemas/NoticeByIdResponse"
                                 }
                             }
                         }
@@ -670,8 +661,7 @@
                         "content": {
                             "application/json": {
                                "schema": {
-                                    "$ref": "#/components/schemas/NoticesItemResponse"
-                                    
+                                    "$ref": "#/components/schemas/Message"
                                 }
                             }
                         }
@@ -863,7 +853,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/schemas/ServicesResponse"
+                                        "$ref": "#/components/schemas/ServicesItemResponse"
                                     }
                                 }
                             }   
@@ -989,6 +979,7 @@
                     }
                 }
             },
+
             "RefreshResponse": {
                 "type": "object",
                 "properties": {
@@ -1064,6 +1055,7 @@
                     }
                 }
             },
+
             "avatar": {
                 "type": "object",
                 "properties": {
@@ -1073,11 +1065,13 @@
                     }
                 }
             },
+
             "FavoriteItemResponse": {
                 "type": "string",
                 "description": "notice id",
                 "example": "63e42f604d3a7943c4ad4320"
             },
+
             "OwnAddRequest": {
                 "type": "object",
                 "required": ["name", "breed", "birthdate"],
@@ -1134,6 +1128,7 @@
                     }
                 }
             },
+
             "NoticeByIdResponse": {
                 "type": "object",
                 "properties": {
@@ -1199,6 +1194,11 @@
                                 "example": "+380998085001"
                             }
                         }
+                    },
+                    "avatarURL": {
+                        "type": "string",
+                        "description": "Notice avatar",
+                        "example": "https://storage.googleapis.com/kidslikev2_bucket/pets-support/images/sponsors/frame_287.png"
                     }
                 }
             },
@@ -1313,7 +1313,8 @@
                     }
                 }
             },
-            "ServicesResponse": {
+
+            "ServicesItemResponse": {
                 "type": "object",
                 "properties": {
                     "title": {
@@ -1403,6 +1404,7 @@
                     }
                 }
             },
+            
             "Message": {
                 "type": "object",
                 "properties": {
