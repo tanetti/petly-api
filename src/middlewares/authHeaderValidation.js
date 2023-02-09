@@ -15,6 +15,7 @@ const authHeaderValidation = async (req, res, next) => {
     if (!tokenType || tokenType !== 'Bearer') {
       throw new Error('token-invalid');
     }
+
     if (!token) {
       throw new Error('token-invalid');
     }
@@ -27,11 +28,12 @@ const authHeaderValidation = async (req, res, next) => {
       throw new Error('token-no-user');
     }
 
-    if (user.token !== token) {
+    if (!user.token.includes(token)) {
       throw new Error('token-invalid');
     }
 
     req.user = user;
+    req.currentToken = token;
   } catch (error) {
     return res.status(401).json({
       code: error.message,

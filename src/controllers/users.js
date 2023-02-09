@@ -8,6 +8,8 @@ const {
   findUserByObjectOfParameters,
   findUserByIdService,
   updateUserByIdService,
+  addTokenToUserByIdService,
+  removeTokenFromUserByIdService,
   addUserFavoriteByIdService,
   deleteUserFavoriteByIdService,
 } = require('../services/users');
@@ -56,7 +58,7 @@ const loginController = async (req, res) => {
 
     const token = jwt.sign({ _id: userId }, process.env.JWT_SECRET);
 
-    await updateUserByIdService(userId, { token });
+    await addTokenToUserByIdService(userId, token);
 
     const result = { token, userId };
 
@@ -88,6 +90,7 @@ const refreshController = async (req, res) => {
 
 const logoutController = async (req, res) => {
   const { _id } = req.user;
+  const { currentToken: token } = req;
 
   try {
     const user = await findUserByIdService(_id);
@@ -96,7 +99,7 @@ const logoutController = async (req, res) => {
       throw new Error('logout-no-user');
     }
 
-    await updateUserByIdService(user._id, { token: null });
+    await removeTokenFromUserByIdService(user._id, token);
 
     res.status(204).json({});
   } catch (error) {

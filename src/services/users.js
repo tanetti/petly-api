@@ -24,6 +24,22 @@ const updateUserByIdService = async (_id, body) => {
   await User.findByIdAndUpdate(_id, body);
 };
 
+const addTokenToUserByIdService = async (_id, token) => {
+  await User.findByIdAndUpdate(_id, {
+    $push: {
+      token,
+    },
+  });
+};
+
+const removeTokenFromUserByIdService = async (_id, token) => {
+  await User.findByIdAndUpdate(_id, {
+    $pull: {
+      token,
+    },
+  });
+};
+
 const addUserFavoriteByIdService = async (_id, favoriteId) => {
   await User.findByIdAndUpdate(_id, {
     $push: {
@@ -45,6 +61,8 @@ module.exports = {
   findUserByObjectOfParameters,
   findUserByIdService,
   updateUserByIdService,
+  addTokenToUserByIdService,
+  removeTokenFromUserByIdService,
   addUserFavoriteByIdService,
   deleteUserFavoriteByIdService,
 };

@@ -36,8 +36,8 @@ const userSchema = new mongoose.Schema({
     default: [],
   },
   token: {
-    type: String,
-    default: null,
+    type: Array,
+    default: [],
   },
 });
 
