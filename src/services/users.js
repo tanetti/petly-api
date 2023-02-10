@@ -1,6 +1,6 @@
 const User = require('../models/user');
 
-const registerUserService = async userData => {
+const registerUser = async userData => {
   const user = new User(userData);
 
   const result = await user.save();
@@ -8,23 +8,23 @@ const registerUserService = async userData => {
   return result;
 };
 
-const findUserByObjectOfParameters = async object => {
+const findUserByParams = async object => {
   const user = await User.findOne(object);
 
   return user;
 };
 
-const findUserByIdService = async _id => {
+const findUserById = async _id => {
   const user = await User.findById(_id);
 
   return user;
 };
 
-const updateUserByIdService = async (_id, body) => {
+const updateUserById = async (_id, body) => {
   await User.findByIdAndUpdate(_id, body);
 };
 
-const addTokenToUserByIdService = async (_id, token) => {
+const addTokenToUserById = async (_id, token) => {
   await User.findByIdAndUpdate(_id, {
     $push: {
       token,
@@ -32,7 +32,7 @@ const addTokenToUserByIdService = async (_id, token) => {
   });
 };
 
-const removeTokenFromUserByIdService = async (_id, token) => {
+const removeTokenFromUserById = async (_id, token) => {
   await User.findByIdAndUpdate(_id, {
     $pull: {
       token,
@@ -40,7 +40,7 @@ const removeTokenFromUserByIdService = async (_id, token) => {
   });
 };
 
-const addUserFavoriteByIdService = async (_id, favoriteId) => {
+const addUserFavoriteById = async (_id, favoriteId) => {
   await User.findByIdAndUpdate(_id, {
     $push: {
       favoriteNotices: favoriteId,
@@ -48,7 +48,7 @@ const addUserFavoriteByIdService = async (_id, favoriteId) => {
   });
 };
 
-const deleteUserFavoriteByIdService = async (_id, favoriteId) => {
+const deleteUserFavoriteById = async (_id, favoriteId) => {
   await User.findByIdAndUpdate(_id, {
     $pull: {
       favoriteNotices: favoriteId,
@@ -57,12 +57,12 @@ const deleteUserFavoriteByIdService = async (_id, favoriteId) => {
 };
 
 module.exports = {
-  registerUserService,
-  findUserByObjectOfParameters,
-  findUserByIdService,
-  updateUserByIdService,
-  addTokenToUserByIdService,
-  removeTokenFromUserByIdService,
-  addUserFavoriteByIdService,
-  deleteUserFavoriteByIdService,
+  registerUser,
+  findUserByParams,
+  findUserById,
+  updateUserById,
+  addTokenToUserById,
+  removeTokenFromUserById,
+  addUserFavoriteById,
+  deleteUserFavoriteById,
 };

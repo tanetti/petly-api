@@ -8,6 +8,7 @@ const swaggerDocument = require('../swagger.json');
 const app = express();
 
 const usersRouter = require('./routes/users');
+const petsRouter = require('./routes/pets');
 const newsRouter = require('./routes/news');
 const servicesRouter = require('./routes/services');
 const noticesRouter = require('./routes/notices');
@@ -23,6 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/', express.static(staticPath));
 app.use('/api/users', usersRouter);
+app.use('/api/pets', petsRouter);
 app.use('/api/news', newsRouter);
 app.use('/api/services', servicesRouter);
 app.use('/api/notices', noticesRouter);

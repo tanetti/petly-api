@@ -1,6 +1,6 @@
 const { Schema, model, SchemaTypes } = require('mongoose');
 
-const ownSchema = new Schema({
+const petSchema = new Schema({
   name: {
     type: String,
     required: [true, 'Provide Name for pet'],
@@ -26,6 +26,6 @@ const ownSchema = new Schema({
   created_at: { type: Date, required: true, default: Date.now },
 });
 
-const Own = model('own', ownSchema);
+const Pet = model('pet', petSchema);
 
-module.exports = Own;
+module.exports = Pet;

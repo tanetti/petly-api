@@ -1,20 +1,18 @@
 const path = require('path');
 const fs = require('fs/promises');
 
-const pathToFile = path.resolve('./mock/services.json');
+const pathToMockFile = path.resolve('./mock/services.json');
 
-const getServicesController = async (req, res) => {
+const getServices = async (req, res) => {
   try {
-    const data = await fs.readFile(pathToFile);
+    const data = await fs.readFile(pathToMockFile);
 
     const result = JSON.parse(data);
 
     res.json(result);
   } catch (error) {
-    return res
-      .status(500)
-      .json({ code: 'api-services-error', message: 'Data corrupted' });
+    return res.status(500).json({ code: 'api-services-error' });
   }
 };
 
-module.exports = getServicesController;
+module.exports = getServices;

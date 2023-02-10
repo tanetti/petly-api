@@ -1,9 +1,9 @@
 const idRequestParameterValidationSchema = require('./schema');
 
-const ownIdQueryParameterValidation = (req, res, next) => {
-  const { ownId } = req.params;
+const petIdQueryParameterValidation = (req, res, next) => {
+  const { petId } = req.params;
 
-  const error = idRequestParameterValidationSchema.validate(ownId).error;
+  const error = idRequestParameterValidationSchema.validate(petId).error;
 
   if (error) {
     const [firstError] = error.details;
@@ -16,4 +16,4 @@ const ownIdQueryParameterValidation = (req, res, next) => {
   next();
 };
 
-module.exports = ownIdQueryParameterValidation;
+module.exports = petIdQueryParameterValidation;

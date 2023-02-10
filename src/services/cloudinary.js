@@ -1,41 +1,24 @@
 const cloudinary = require('cloudinary').v2;
-const {
-  USER_AVATAR,
-  OWN_AVATAR,
-  NOTICE_AVATAR,
-} = require('../constants/cloudinaryOptionsPresets');
-
+const UPLOAD_PRESETS = require('../constants/uploadPresets');
 const generatePublicIId = require('../utilities/generatePublicId');
 
 cloudinary.config({
   secure: true,
 });
 
-const uploadUserAvatarService = async imagePath => {
-  const result = await cloudinary.uploader.upload(imagePath, USER_AVATAR);
+const uploadAvatar = async (imagePath, fieldName) => {
+  const uploadPreset = UPLOAD_PRESETS[fieldName] ?? UPLOAD_PRESETS.unspecified;
+  console.log(fieldName);
+  const result = await cloudinary.uploader.upload(imagePath, uploadPreset);
 
   return result;
 };
 
-const uploadOwnAvatarService = async imagePath => {
-  const result = await cloudinary.uploader.upload(imagePath, OWN_AVATAR);
-
-  return result;
-};
-
-const uploadNoticeAvatarService = async imagePath => {
-  const result = await cloudinary.uploader.upload(imagePath, NOTICE_AVATAR);
-
-  return result;
-};
-
-const destroyAvatarByUrlService = async currentUrl => {
+const destroyAvatarByUrl = async currentUrl => {
   await cloudinary.uploader.destroy(generatePublicIId(currentUrl));
 };
 
 module.exports = {
-  uploadUserAvatarService,
-  uploadOwnAvatarService,
-  uploadNoticeAvatarService,
-  destroyAvatarByUrlService,
+  uploadAvatar,
+  destroyAvatarByUrl,
 };

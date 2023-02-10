@@ -5,7 +5,7 @@ const filterData = require('../utilities/filterResult');
 
 const pathToFile = path.resolve('./mock/news.json');
 
-const getNewsController = async (req, res) => {
+const getNews = async (req, res) => {
   const { search = '' } = req.query;
 
   try {
@@ -19,10 +19,8 @@ const getNewsController = async (req, res) => {
 
     res.json(result);
   } catch (error) {
-    return res
-      .status(500)
-      .json({ code: 'api-news-error', message: 'Data corrupted' });
+    return res.status(500).json({ code: 'api-news-error' });
   }
 };
 
-module.exports = getNewsController;
+module.exports = getNews;

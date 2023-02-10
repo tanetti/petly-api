@@ -8,22 +8,22 @@ const noticeCategoryParameterValidation = require('../middlewares/noticeCategory
 const noticeBodyValidation = require('../middlewares/noticeBodyValidation/validation');
 
 const {
-  getNoticeCategoryController,
-  getUserOwnNoticesController,
-  getUserFavoriteNoticesController,
+  getNoticesByCategory,
+  getOwnNotices,
+  getFavoriteNotices,
   getNoticeById,
-  addNoticeController,
-  deleteNoticeByIdAndOwnerController,
+  addNotice,
+  deleteNoticeById,
 } = require('../controllers/notices');
 
 const compressImage = require('../middlewares/compressImage');
 
-router.get('/own', authHeaderValidation, getUserOwnNoticesController);
-router.get('/favorite', authHeaderValidation, getUserFavoriteNoticesController);
+router.get('/own', authHeaderValidation, getOwnNotices);
+router.get('/favorite', authHeaderValidation, getFavoriteNotices);
 router.get(
   '/category/:categoryName',
   noticeCategoryParameterValidation,
-  getNoticeCategoryController
+  getNoticesByCategory
 );
 router.get('/:noticeId', noticeIdParameterValidation, getNoticeById);
 router.post(
@@ -32,13 +32,13 @@ router.post(
   upload.single('notice_avatar'),
   compressImage,
   noticeBodyValidation,
-  addNoticeController
+  addNotice
 );
 router.delete(
   '/:noticeId',
   authHeaderValidation,
   noticeIdParameterValidation,
-  deleteNoticeByIdAndOwnerController
+  deleteNoticeById
 );
 
 module.exports = router;

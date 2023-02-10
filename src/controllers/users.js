@@ -4,24 +4,21 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const {
-  registerUserService,
-  findUserByObjectOfParameters,
-  findUserByIdService,
-  updateUserByIdService,
-  addTokenToUserByIdService,
-  removeTokenFromUserByIdService,
-  addUserFavoriteByIdService,
-  deleteUserFavoriteByIdService,
+  registerUser,
+  findUserByParams,
+  findUserById,
+  updateUserById,
+  addTokenToUserById,
+  removeTokenFromUserById,
+  addUserFavoriteById,
+  deleteUserFavoriteById,
 } = require('../services/users');
 
-const {
-  uploadUserAvatarService,
-  destroyAvatarByUrlService,
-} = require('../services/cloudinary');
+const { uploadAvatar, destroyAvatarByUrl } = require('../services/cloudinary');
 
-const registerController = async (req, res) => {
+const register = async (req, res) => {
   try {
-    const result = await registerUserService(req.body);
+    const result = await registerUser(req.body);
 
     const { email } = result;
 
@@ -35,11 +32,11 @@ const registerController = async (req, res) => {
   }
 };
 
-const loginController = async (req, res) => {
+const login = async (req, res) => {
   const { email: requestEmail, password: requestPassword } = req.body;
 
   try {
-    const user = await findUserByObjectOfParameters({ email: requestEmail });
+    const user = await findUserByParams({ email: requestEmail });
 
     if (!user) {
       throw new Error('login-0100-error');
@@ -58,7 +55,7 @@ const loginController = async (req, res) => {
 
     const token = jwt.sign({ _id: userId }, process.env.JWT_SECRET);
 
-    await addTokenToUserByIdService(userId, token);
+    await addTokenToUserById(userId, token);
 
     const result = { token, userId };
 
@@ -68,11 +65,11 @@ const loginController = async (req, res) => {
   }
 };
 
-const refreshController = async (req, res) => {
+const refresh = async (req, res) => {
   const { _id } = req.user;
 
   try {
-    const user = await findUserByIdService(_id);
+    const user = await findUserById(_id);
 
     if (!user) {
       throw new Error('refresh-no-user');
@@ -88,18 +85,18 @@ const refreshController = async (req, res) => {
   }
 };
 
-const logoutController = async (req, res) => {
+const logout = async (req, res) => {
   const { _id } = req.user;
   const { currentToken: token } = req;
 
   try {
-    const user = await findUserByIdService(_id);
+    const user = await findUserById(_id);
 
     if (!user) {
       throw new Error('logout-no-user');
     }
 
-    await removeTokenFromUserByIdService(user._id, token);
+    await removeTokenFromUserById(user._id, token);
 
     res.status(204).json({});
   } catch (error) {
@@ -107,7 +104,7 @@ const logoutController = async (req, res) => {
   }
 };
 
-const getCurrentUserInfoController = async (req, res) => {
+const getCurrentUserInfo = async (req, res) => {
   const { email, name, address, phone, birthday, avatarURL } = req.user;
 
   const result = {
@@ -122,12 +119,12 @@ const getCurrentUserInfoController = async (req, res) => {
   res.json(result);
 };
 
-const updateCurrentUserInfoController = async (req, res) => {
+const updateCurrentUserInfo = async (req, res) => {
   const { _id } = req.user;
   const body = req.body;
 
   try {
-    await updateUserByIdService(_id, body);
+    await updateUserById(_id, body);
 
     res.json({ code: 'user-update-success' });
   } catch (error) {
@@ -139,11 +136,11 @@ const updateCurrentUserInfoController = async (req, res) => {
   }
 };
 
-const getFavoriteController = async (req, res) => {
+const getFavorite = async (req, res) => {
   const { _id } = req.user;
 
   try {
-    const { favoriteNotices } = await findUserByIdService(_id);
+    const { favoriteNotices } = await findUserById(_id);
 
     res.json(favoriteNotices);
   } catch (error) {
@@ -151,7 +148,7 @@ const getFavoriteController = async (req, res) => {
   }
 };
 
-const updateFavoriteController = async (req, res) => {
+const updateFavorite = async (req, res) => {
   const { _id } = req.user;
   const { noticeId } = req.params;
 
@@ -160,7 +157,7 @@ const updateFavoriteController = async (req, res) => {
       throw new Error('favorite-no-id-error');
     }
 
-    await addUserFavoriteByIdService(_id, noticeId);
+    await addUserFavoriteById(_id, noticeId);
 
     res.json({ code: 'favorite-update-success' });
   } catch (error) {
@@ -168,7 +165,7 @@ const updateFavoriteController = async (req, res) => {
   }
 };
 
-const deleteFavoriteController = async (req, res, next) => {
+const deleteFavorite = async (req, res, next) => {
   const { _id } = req.user;
   const { noticeId } = req.params;
 
@@ -177,7 +174,7 @@ const deleteFavoriteController = async (req, res, next) => {
       throw new Error('favorite-no-id-error');
     }
 
-    await deleteUserFavoriteByIdService(_id, noticeId);
+    await deleteUserFavoriteById(_id, noticeId);
 
     res.json('favorite-delete-success-error');
   } catch (error) {
@@ -185,18 +182,18 @@ const deleteFavoriteController = async (req, res, next) => {
   }
 };
 
-const updateAvatarController = async (req, res) => {
+const updateAvatar = async (req, res) => {
   const { _id, avatarURL: oldAvatarUrl } = req.user;
-  const { compressedImagePath } = req;
+  const { compressedImagePath, fieldName } = req;
 
   try {
-    if (oldAvatarUrl) await destroyAvatarByUrlService(oldAvatarUrl);
+    if (oldAvatarUrl) await destroyAvatarByUrl(oldAvatarUrl);
 
-    const { url } = await uploadUserAvatarService(compressedImagePath);
+    const { url } = await uploadAvatar(compressedImagePath, fieldName);
 
     await fs.unlink(compressedImagePath);
 
-    await updateUserByIdService(_id, { avatarURL: url });
+    await updateUserById(_id, { avatarURL: url });
 
     res.json({ code: 'avatar-update-success' });
   } catch (error) {
@@ -204,13 +201,13 @@ const updateAvatarController = async (req, res) => {
   }
 };
 
-const deleteAvatarController = async (req, res) => {
+const deleteAvatar = async (req, res) => {
   const { _id, avatarURL } = req.user;
 
   try {
-    await destroyAvatarByUrlService(avatarURL);
+    await destroyAvatarByUrl(avatarURL);
 
-    await updateUserByIdService(_id, { avatarURL: null });
+    await updateUserById(_id, { avatarURL: null });
 
     res.json({ code: 'avatar-delete-success' });
   } catch (error) {
@@ -219,15 +216,15 @@ const deleteAvatarController = async (req, res) => {
 };
 
 module.exports = {
-  registerController,
-  loginController,
-  refreshController,
-  logoutController,
-  getCurrentUserInfoController,
-  updateCurrentUserInfoController,
-  updateFavoriteController,
-  getFavoriteController,
-  deleteFavoriteController,
-  updateAvatarController,
-  deleteAvatarController,
+  register,
+  login,
+  refresh,
+  logout,
+  getCurrentUserInfo,
+  updateCurrentUserInfo,
+  updateFavorite,
+  getFavorite,
+  deleteFavorite,
+  updateAvatar,
+  deleteAvatar,
 };

@@ -1,6 +1,6 @@
 const Notice = require('../models/notice');
 
-const findSortedByDateCategoryNoticesService = async (category, search) => {
+const findNoticesByCategory = async (category, search) => {
   let result = null;
 
   if (!search) {
@@ -23,7 +23,7 @@ const findSortedByDateCategoryNoticesService = async (category, search) => {
   return result;
 };
 
-const findSortedByDateUserOwnNoticesService = async (owner, search) => {
+const findOwnNotices = async (owner, search) => {
   let result = null;
 
   if (!search) {
@@ -46,10 +46,7 @@ const findSortedByDateUserOwnNoticesService = async (owner, search) => {
   return result;
 };
 
-const findSortedByDateUserFavotiteNoticesService = async (
-  userFavoriteNotices,
-  search
-) => {
+const findFavotiteNotices = async (userFavoriteNotices, search) => {
   let result = null;
 
   if (!search) {
@@ -72,7 +69,7 @@ const findSortedByDateUserFavotiteNoticesService = async (
   return result;
 };
 
-const getNoticeByIdService = async _id => {
+const findNoticeById = async _id => {
   const result = await Notice.findById(_id)
     .select('-__v -created_at')
     .populate('owner', '_id email phone');
@@ -80,7 +77,7 @@ const getNoticeByIdService = async _id => {
   return result;
 };
 
-const addNoticeService = async data => {
+const addNewNotice = async data => {
   const notice = new Notice(data);
 
   const result = await notice.save();
@@ -88,22 +85,22 @@ const addNoticeService = async data => {
   return result;
 };
 
-const updateNoticeByIdService = async (_id, body) => {
+const updateNoticeById = async (_id, body) => {
   await Notice.findByIdAndUpdate(_id, body);
 };
 
-const deleteNoticeByParametersService = async parameters => {
+const deleteNoticeByParams = async parameters => {
   const result = await Notice.findOneAndDelete(parameters);
 
   return result;
 };
 
 module.exports = {
-  findSortedByDateCategoryNoticesService,
-  findSortedByDateUserOwnNoticesService,
-  findSortedByDateUserFavotiteNoticesService,
-  getNoticeByIdService,
-  addNoticeService,
-  updateNoticeByIdService,
-  deleteNoticeByParametersService,
+  findNoticesByCategory,
+  findOwnNotices,
+  findFavotiteNotices,
+  findNoticeById,
+  addNewNotice,
+  updateNoticeById,
+  deleteNoticeByParams,
 };

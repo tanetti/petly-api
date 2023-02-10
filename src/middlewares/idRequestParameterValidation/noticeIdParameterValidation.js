@@ -1,6 +1,6 @@
 const idRequestParameterValidationSchema = require('./schema');
 
-const ownIdQueryParameterValidation = (req, res, next) => {
+const noticeIdQueryParameterValidation = (req, res, next) => {
   const { noticeId } = req.params;
 
   const error = idRequestParameterValidationSchema.validate(noticeId).error;
@@ -16,4 +16,4 @@ const ownIdQueryParameterValidation = (req, res, next) => {
   next();
 };
 
-module.exports = ownIdQueryParameterValidation;
+module.exports = noticeIdQueryParameterValidation;

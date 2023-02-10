@@ -3,29 +3,26 @@ const fs = require('fs/promises');
 const createNewImagePath = require('../utilities/createNewImagePath');
 
 const {
-  uploadNoticeAvatarService,
-  destroyAvatarByUrlService,
+  uploadAvatar,
+  destroyAvatarByUrl,
 } = require('../services/cloudinary');
 
 const {
-  findSortedByDateCategoryNoticesService,
-  findSortedByDateUserOwnNoticesService,
-  findSortedByDateUserFavotiteNoticesService,
-  addNoticeService,
-  updateNoticeByIdService,
-  deleteNoticeByParametersService,
-  getNoticeByIdService,
+  findNoticesByCategory,
+  findOwnNotices,
+  findFavotiteNotices,
+  addNewNotice,
+  updateNoticeById,
+  deleteNoticeByParams,
+  findNoticeById,
 } = require('../services/notices');
 
-const getNoticeCategoryController = async (req, res) => {
+const getNoticesByCategory = async (req, res) => {
   const { categoryName } = req.params;
   const { search = '' } = req.query;
 
   try {
-    const result = await findSortedByDateCategoryNoticesService(
-      categoryName,
-      search
-    );
+    const result = await findNoticesByCategory(categoryName, search);
 
     if (!result) {
       throw new Error('notices-get-error');
@@ -37,12 +34,12 @@ const getNoticeCategoryController = async (req, res) => {
   }
 };
 
-const getUserOwnNoticesController = async (req, res) => {
+const getOwnNotices = async (req, res) => {
   const { _id } = req.user;
   const { search = '' } = req.query;
 
   try {
-    const result = await findSortedByDateUserOwnNoticesService(_id, search);
+    const result = await findOwnNotices(_id, search);
 
     if (!result) {
       throw new Error('notices-get-error');
@@ -54,15 +51,12 @@ const getUserOwnNoticesController = async (req, res) => {
   }
 };
 
-const getUserFavoriteNoticesController = async (req, res) => {
+const getFavoriteNotices = async (req, res) => {
   const { favoriteNotices } = req.user;
   const { search = '' } = req.query;
 
   try {
-    const result = await findSortedByDateUserFavotiteNoticesService(
-      favoriteNotices,
-      search
-    );
+    const result = await findFavotiteNotices(favoriteNotices, search);
 
     if (!result) {
       throw new Error('notices-get-error');
@@ -78,7 +72,7 @@ const getNoticeById = async (req, res) => {
   const { noticeId } = req.params;
 
   try {
-    const result = await getNoticeByIdService(noticeId);
+    const result = await findNoticeById(noticeId);
 
     if (!result) {
       throw new Error('notice-get-error');
@@ -90,12 +84,12 @@ const getNoticeById = async (req, res) => {
   }
 };
 
-const addNoticeController = async (req, res) => {
+const addNotice = async (req, res) => {
   const { _id } = req.user;
-  const { compressedImagePath } = req;
+  const { compressedImagePath, fieldName } = req;
 
   try {
-    const { _id: noticeId } = await addNoticeService({
+    const { _id: noticeId } = await addNewNotice({
       ...req.body,
       owner: _id,
     });
@@ -104,11 +98,11 @@ const addNoticeController = async (req, res) => {
 
     await fs.rename(compressedImagePath, newImagePath);
 
-    const { url } = await uploadNoticeAvatarService(newImagePath);
+    const { url } = await uploadAvatar(newImagePath, fieldName);
 
     await fs.unlink(newImagePath);
 
-    await updateNoticeByIdService(noticeId, { avatarURL: url });
+    await updateNoticeById(noticeId, { avatarURL: url });
 
     res.json({ code: 'notice-add-success' });
   } catch (error) {
@@ -116,20 +110,20 @@ const addNoticeController = async (req, res) => {
   }
 };
 
-const deleteNoticeByIdAndOwnerController = async (req, res) => {
+const deleteNoticeById = async (req, res) => {
   const { noticeId } = req.params;
   const { _id: owner } = req.user;
 
   try {
-    const currentNotice = await getNoticeByIdService(noticeId);
+    const currentNotice = await findNoticeById(noticeId);
 
     if (!currentNotice) {
       return res.status(404).json({ code: 'notice-delete-not-found-error' });
     }
 
-    await destroyAvatarByUrlService(currentNotice.avatarURL);
+    await destroyAvatarByUrl(currentNotice.avatarURL);
 
-    await deleteNoticeByParametersService({
+    await deleteNoticeByParams({
       _id: noticeId,
       owner,
     });
@@ -141,10 +135,10 @@ const deleteNoticeByIdAndOwnerController = async (req, res) => {
 };
 
 module.exports = {
-  getNoticeCategoryController,
-  getUserOwnNoticesController,
-  getUserFavoriteNoticesController,
+  getNoticesByCategory,
+  getOwnNotices,
+  getFavoriteNotices,
   getNoticeById,
-  addNoticeController,
-  deleteNoticeByIdAndOwnerController,
+  addNotice,
+  deleteNoticeById,
 };

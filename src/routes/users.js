@@ -5,79 +5,51 @@ const upload = require('../middlewares/uploadImage');
 const compressImage = require('../middlewares/compressImage');
 const authHeaderValidation = require('../middlewares/authHeaderValidation');
 const userBodyValidation = require('../middlewares/userBodyValidation/validation');
-const ownIdParameterValidation = require('../middlewares/idRequestParameterValidation/ownIdParameterValidation');
 const noticeIdParameterValidation = require('../middlewares/idRequestParameterValidation/noticeIdParameterValidation');
-const ownBodyValidation = require('../middlewares/ownBodyValidation/validation');
 
 const {
-  registerController,
-  loginController,
-  refreshController,
-  logoutController,
-  updateFavoriteController,
-  getFavoriteController,
-  deleteFavoriteController,
-  getCurrentUserInfoController,
-  updateCurrentUserInfoController,
-  updateAvatarController,
-  deleteAvatarController,
+  register,
+  login,
+  refresh,
+  logout,
+  updateFavorite,
+  getFavorite,
+  deleteFavorite,
+  getCurrentUserInfo,
+  updateCurrentUserInfo,
+  updateAvatar,
+  deleteAvatar,
 } = require('../controllers/users');
 
-const {
-  getOwnController,
-  addOwnController,
-  deleteOwnByIdController,
-} = require('../controllers/own');
+router.get('/refresh', authHeaderValidation, refresh);
+router.post('/login', userBodyValidation, login);
+router.post('/register', userBodyValidation, register);
+router.post('/logout', authHeaderValidation, logout);
 
-router.get('/refresh', authHeaderValidation, refreshController);
-router.post('/login', userBodyValidation, loginController);
-router.post('/register', userBodyValidation, registerController);
-router.post('/logout', authHeaderValidation, logoutController);
-
-router.get('/current', authHeaderValidation, getCurrentUserInfoController);
+router.get('/current', authHeaderValidation, getCurrentUserInfo);
 router.patch(
   '/current',
   authHeaderValidation,
   userBodyValidation,
-  updateCurrentUserInfoController
+  updateCurrentUserInfo
 );
 
-router.get('/own', authHeaderValidation, getOwnController);
-router.post(
-  '/own',
-  authHeaderValidation,
-  upload.single('pet_avatar'),
-  compressImage,
-  ownBodyValidation,
-  addOwnController
-);
-router.delete(
-  '/own/:ownId',
-  authHeaderValidation,
-  ownIdParameterValidation,
-  deleteOwnByIdController
-);
-
-router.get('/favorite', authHeaderValidation, getFavoriteController);
-router.patch(
-  '/favorite/:noticeId',
-  authHeaderValidation,
-  updateFavoriteController
-);
+router.get('/favorite', authHeaderValidation, getFavorite);
+router.patch('/favorite/:noticeId', authHeaderValidation, updateFavorite);
 router.delete(
   '/favorite/:noticeId',
   authHeaderValidation,
   noticeIdParameterValidation,
-  deleteFavoriteController
+  deleteFavorite
 );
 
 router.post(
   '/avatars',
   authHeaderValidation,
-  upload.single('avatar'),
+  upload.single('user_avatar'),
   compressImage,
-  updateAvatarController
+  updateAvatar
 );
-router.delete('/avatars', authHeaderValidation, deleteAvatarController);
+router.delete('/avatars', authHeaderValidation, deleteAvatar);
 
 module.exports = router;
