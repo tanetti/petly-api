@@ -11,7 +11,7 @@
   },
   "consumes": ["application/json", "multipart/form-data"],
   "produces": ["application/json", "multipart/form-data"],
-  "servers": [{ "url": "https://petly-ukraine.up.railway.app" }],
+  "servers": [{ "url": "https://petly-xnct.onrender.com/api" }],
   "tags": [
     {
       "name": "Users",
