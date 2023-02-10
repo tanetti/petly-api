@@ -28,6 +28,10 @@
     {
       "name": "Notices",
       "description": "Notices endpoints"
+    },
+    {
+      "name": "Pets",
+      "description": "Notices endpoints"
     }
   ],
   "paths": {
@@ -236,9 +240,9 @@
         }
       }
     },
-    "/api/users/own": {
+    "/api/pets": {
       "get": {
-        "tags": ["Users"],
+        "tags": ["Pets"],
         "summary": "Список власних домашніх тварин",
         "parameters": [
           {
@@ -272,7 +276,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/OwnItemResponse"
+                    "$ref": "#/components/schemas/OwnPetItemResponse"
                   }
                 }
               }
@@ -291,7 +295,7 @@
         }
       },
       "post": {
-        "tags": ["Users"],
+        "tags": ["Pets"],
         "summary": "Додавання картки власної тварини",
         "parameters": [],
         "security": [{ "Bearer": [] }],
@@ -302,7 +306,7 @@
           "content": {
             "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/OwnAddRequest"
+                "$ref": "#/components/schemas/OwnPetAddRequest"
               }
             }
           }
@@ -331,14 +335,14 @@
         }
       }
     },
-    "/api/users/own/{ownId}": {
+    "/api/pets/{petId}": {
       "delete": {
-        "tags": ["Users"],
+        "tags": ["Pets"],
         "summary": "Видалення картки власної тварини",
         "security": [{ "Bearer": [] }],
         "parameters": [
           {
-            "name": "ownId",
+            "name": "petId",
             "in": "path",
             "description": "Id of notice",
             "required": true,
@@ -1075,7 +1079,7 @@
         "example": "63e42f604d3a7943c4ad4320"
       },
 
-      "OwnAddRequest": {
+      "OwnPetAddRequest": {
         "type": "object",
         "required": ["name", "breed", "birthdate"],
         "properties": {
@@ -1103,7 +1107,7 @@
           }
         }
       },
-      "OwnItemResponse": {
+      "OwnPetItemResponse": {
         "type": "object",
         "required": ["name", "breed"],
         "properties": {
@@ -1128,6 +1132,11 @@
           "comments": {
             "type": "string",
             "description": "about own pet"
+          },
+          "avatarURL": {
+            "type": "string",
+            "description": "Pet avatar",
+            "example": "https://storage.googleapis.com/kidslikev2_bucket/pets-support/images/sponsors/frame_287.png"
           }
         }
       },
